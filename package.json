@@ -1,0 +1,19 @@
+{
+  "name": "p7-groupomania-backend",
+  "version": "1.0.0",
+  "description": "Back end du P7 Groupomania",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Groupomania",
+    "Réseau social"
+  ],
+  "author": "Sylvain Bruyat",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1"
+  }
+}

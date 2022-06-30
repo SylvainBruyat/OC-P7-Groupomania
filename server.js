@@ -1,4 +1,4 @@
-const http = require('http'); // A passer en HTTPS pour le déploiement en production
+const http = require('http'); //TODO A passer en HTTPS pour le déploiement en production
 const dotenv = require('dotenv');
 const app = require('./app');
 

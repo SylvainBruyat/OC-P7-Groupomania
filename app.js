@@ -1,24 +1,36 @@
 const express = require('express');
-const mysql = require('mysql2');
+const dotenv = require('dotenv');
+const mongoose = require('mongoose');
 const app = express();
 
-//TODO Besoin d'un timeout pour que le server soit lancé avant la tentative de connexion à la BDD. Problème à régler !
-setTimeout(() => {
+const User = require('./routes/user/UserRouter');
+const Post = require('./routes/post/PostRouter');
+const Comment = require('./routes/comment/CommentRouter');
 
-const connection = mysql.createConnection({
-    host: 'localhost',
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: 'groupomania'
+dotenv.config();
+
+mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}
+@groupomania.ffc77.mongodb.net/?retryWrites=true&w=majority`)
+    .then(() => console.log("Connection to MongoDB successful"))
+    .catch(() => console.log("Connection to MongoDB failed"));
+
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    next();
 });
 
-/* connection.query(
-    "SELECT * FROM user", function(err, results, fields) {
-        console.log("results");
-        console.log(results);
-    }
-); */
+app.use(express.json());
 
-}, 1000); //TODO Fin du timeout à supprimer
+/*TODO Ajouter une/des couche(s) de sécurité :
+    contrôle des entrées utilisateur (package joi ?),
+    protection contre les attaques par injection (package mongoSanitize ?),
+    etc.
+*/
+
+app.use('/api/user', User);
+app.use('/api/post', Post);
+app.use('/api/comment', Comment);
 
 module.exports = app;

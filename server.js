@@ -1,8 +1,5 @@
 const http = require('http'); //TODO A passer en HTTPS pour le déploiement en production
-const dotenv = require('dotenv');
 const app = require('./app');
-
-dotenv.config();
 
 const normalizePort = val => {
     const port = parseInt(val, 10);

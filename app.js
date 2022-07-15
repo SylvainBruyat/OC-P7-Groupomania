@@ -23,9 +23,10 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-/*TODO Ajouter une/des couche(s) de sécurité :
+/* TODO Ajouter des couches de sécurité :
     contrôle des entrées utilisateur (package joi ?),
     protection contre les attaques par injection (package mongoSanitize ?),
+    package helmet ?,
     etc.
 */
 

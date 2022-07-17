@@ -77,6 +77,9 @@ exports.getProfile = async (req, res, next) => {
 
 exports.updateProfile = async (req, res, next) => {
     try {
+        if (req.params.id !== req.auth.userId)
+            return res.status(403).json({message: "Forbidden Request"});
+
         let user = await User.findOne({_id: req.params.id}).lean(); //TODO Voir pour remplacer par findOneAndUpdate()
         if (req.file) {
             if (user.profilePictureUrl !== "") {

@@ -36,15 +36,14 @@ exports.getFivePosts = async (req, res, next) => {
         let posts = await Post.find()
             .sort({creationTimestamp: "descending"})
             .skip(req.body.offset).limit(5);
-        if (!posts)
-            return res.status(404).json({message: "Post not found !"}); //TODO Vérifier si find() peut renvoyer une 404
+        if (!posts) //TODO Vérifier si find() peut renvoyer null ou undefined
+            return res.status(404).json({message: "Post not found !"}); 
         res.status(200).json(posts);
     }
     catch (error) {
         console.error(error);
         res.status(500).json({message: "Internal server error"});
     }
-
 }
 
 exports.getFivePostsFromUser = async (req, res, next) => {
@@ -56,7 +55,7 @@ exports.getFivePostsFromUser = async (req, res, next) => {
         let posts = await Post.find({userId: req.params.id})
             .sort({creationTimestamp: "descending"})
             .skip(req.body.offset).limit(5);
-        if (!posts)
+        if (!posts) //TODO Vérifier si find() peut renvoyer null ou undefined
             return res.status(404).json({message: "Post not found !"});
         res.status(200).json(posts);
     }
@@ -82,6 +81,12 @@ exports.getOnePost = async (req, res, next) => {
 exports.modifyPost = async (req, res, next) => {
     try {
         let post = await Post.findOne({_id: req.params.id}).lean(); //TODO Voir pour remplacer par findOneAndUpdate()
+        if (!post)
+            return res.status(404).json({message: "Post not found !"});
+
+        if (post.userId !== req.auth.userId)
+            return res.status(403).json({message: "Forbidden Request"});
+
         if (req.file) {
             if (post.imageUrl !== "") {
                 const filename = post.imageUrl.split('/images/')[1];
@@ -121,11 +126,11 @@ exports.deletePost = async (req, res, next) => {
     try {
         let post = await Post.findOne({_id: req.params.id});
 
-        if (post.userId !== req.auth.userId) //TODO Ajouter la condition admin.
-            return res.status(403).json({message: "Forbidden Request"});
-
         if (!post)
             return res.status(404).json({message: "Post not found"});
+
+        if (post.userId !== req.auth.userId) //TODO Ajouter la condition admin.
+            return res.status(403).json({message: "Forbidden Request"});
 
         if (post.imageUrl !== "") {
             const filename = post.imageUrl.split('/images/')[1];

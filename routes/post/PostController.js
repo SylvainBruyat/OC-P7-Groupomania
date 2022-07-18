@@ -8,6 +8,7 @@ exports.createPost = async (req, res, next) => {
         const post = req.file ?
         new Post({
             ...JSON.parse(req.body.post),
+            userId: req.auth.userId,
             imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
             numberOfLikes: 0,
             likeUserIds: [],
@@ -84,7 +85,7 @@ exports.modifyPost = async (req, res, next) => {
         if (!post)
             return res.status(404).json({message: "Post not found !"});
 
-        if (post.userId !== req.auth.userId)
+        if ((post.userId !== req.auth.userId) && (req.auth.admin !== true))
             return res.status(403).json({message: "Forbidden Request"});
 
         if (req.file) {
@@ -129,7 +130,7 @@ exports.deletePost = async (req, res, next) => {
         if (!post)
             return res.status(404).json({message: "Post not found"});
 
-        if (post.userId !== req.auth.userId) //TODO Ajouter la condition admin.
+        if ((post.userId !== req.auth.userId) && (req.auth.admin !== true))
             return res.status(403).json({message: "Forbidden Request"});
 
         if (post.imageUrl !== "") {

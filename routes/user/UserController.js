@@ -93,10 +93,14 @@ exports.getProfile = async (req, res, next) => {
 
 exports.updateProfile = async (req, res, next) => {
     try {
-        if (req.params.id !== req.auth.userId)
+        if ((req.params.id !== req.auth.userId) && (req.auth.admin !== true))
             return res.status(403).json({message: "Forbidden Request"});
 
         let user = await User.findOne({_id: req.params.id}).lean(); //TODO Voir pour remplacer par findOneAndUpdate()
+
+        if (!user)
+            return res.status(404).json({message: "User not found"});
+            
         if (req.file) {
             if (user.profilePictureUrl !== "") {
                 const filename = user.profilePictureUrl.split('/images/')[1];
@@ -126,7 +130,7 @@ exports.updateProfile = async (req, res, next) => {
 
 exports.deleteProfile = async (req, res, next) => {
     try {
-        if (req.params.id !== req.auth.userId) //TODO Ajouter la condition admin.
+        if ((req.params.id !== req.auth.userId) && (req.auth.admin !== true))
             return res.status(403).json({message: "Forbidden Request"});
 
         let user = await User.findOne({_id: req.params.id});

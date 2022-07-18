@@ -7,7 +7,7 @@ const userDefinition = {
     firstName: {type: String, required: true},
     lastName: {type: String, required: true},
     profilePictureUrl: {type: String, required: false},
-    admin: {type: String, required: true, default: false}
+    admin: {type: Boolean, required: true, default: false}
 }
 
 const userSchema = new mongoose.Schema(userDefinition);

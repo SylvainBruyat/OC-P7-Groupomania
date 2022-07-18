@@ -5,6 +5,7 @@ exports.createComment = async (req, res, next) => {
     try {
         const comment = new Comment({
             ...req.body,
+            userId: req.auth.userId,
             numberOfLikes: 0,
             likeUserIds: [],
             creationTimestamp: Date.now(),
@@ -59,14 +60,14 @@ exports.modifyComment = async (req, res, next) => {
         if (!comment)
             return res.status(404).json({message: "Comment not found !"});
 
-        if (comment.userId !== req.auth.userId) //TODO Ajouter la condition admin.
+        if ((comment.userId !== req.auth.userId) && (req.auth.admin !== true))
         return res.status(403).json({message: "Forbidden Request"});
 
         const commentObject = {
             ...req.body,
             modificationTimestamp: Date.now()
         };
-        
+
         //Empêche de modifier les likes sur ce endpoint
         delete commentObject.numberOfLikes;
         delete commentObject.likeUserIds;
@@ -87,7 +88,7 @@ exports.deleteComment = async (req, res, next) => {
         if (!comment)
             return res.status(404).json({message: "Comment not found"});
 
-        if (comment.userId !== req.auth.userId) //TODO Ajouter la condition admin.
+        if ((comment.userId !== req.auth.userId) && (req.auth.admin !== true))
             return res.status(403).json({message: "Forbidden Request"});
 
         await Comment.deleteOne({_id: req.params.id});

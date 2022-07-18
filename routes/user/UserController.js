@@ -1,11 +1,25 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs/promises');
+const passwordValidator = require('password-validator');
 
 const User = require('./UserModel').model;
 
 exports.signup = async (req, res, next) => {
-    try {        
+    try {
+        const schema = new passwordValidator();
+        schema
+            .is().min(8)
+            .has().lowercase()
+            .has().uppercase()
+            .has().digits()
+            .has().symbols()
+            .has().not().spaces()
+            .is().not().oneOf(req.body.email, req.body.firstName, req.body.lastName);
+        const passwordFailureCriteria = schema.validate(req.body.password, {list: true});
+        if (passwordFailureCriteria.length !== 0)
+            return res.status(400).json({message: "Invalid password", failedCriteria: passwordFailureCriteria});
+
         let hash = await bcrypt.hash(req.body.password, 10);
         const user = new User({
             email: req.body.email,
@@ -19,6 +33,8 @@ exports.signup = async (req, res, next) => {
         res.status(201).json({message: "Account created successfully"});
     }
     catch (error) {
+        console.log("error");
+        console.log(error);
         if (error.errors.email && error.errors.email.properties.type === "unique"){
             console.error(error);
             res.status(409).json({message: "An account already exists with this email address"});
@@ -43,7 +59,7 @@ exports.login = async (req, res, next) => {
         res.status(200).json({
             userId: user._id,
             token: jwt.sign(
-                {userId: user._id},
+                {userId: user._id, admin: user.admin},
                 process.env.TOKEN_KEY,
                 {expiresIn: '24h'}
             )

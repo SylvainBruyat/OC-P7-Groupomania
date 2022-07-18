@@ -1,7 +1,11 @@
 const express = require('express');
-const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const app = express();
+
+const path = require ('path');
+const dotenv = require('dotenv');
+const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require("helmet");
 
 const User = require('./routes/user/UserRouter');
 const Post = require('./routes/post/PostRouter');
@@ -22,13 +26,16 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
+app.use(helmet());
+app.use(mongoSanitize({allowDots: true}));
 
 /* TODO Ajouter des couches de sécurité :
     contrôle des entrées utilisateur (package joi ?),
-    protection contre les attaques par injection (package mongoSanitize ?),
-    package helmet ?,
+    limitation du nombre de requêtes (package express-rate-limit ?),
     etc.
 */
+
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use('/api/user', User);
 app.use('/api/post', Post);

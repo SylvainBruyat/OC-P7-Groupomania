@@ -5,7 +5,7 @@ const userController = require('./UserController');
 const auth = require('../../middleware/auth');
 const multer = require('../../middleware/multer-config');
 
-router.post('/signup', multer, userController.signup);
+router.post('/signup', userController.signup);
 router.post('/login', userController.login);
 router.get('/:id', auth, userController.getProfile);
 router.put('/:id', auth, multer, userController.updateProfile);

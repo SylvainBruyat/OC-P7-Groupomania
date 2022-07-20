@@ -20,32 +20,12 @@ exports.createComment = async (req, res, next) => {
     }
 }
 
-exports.getTwoComments = async (req, res, next) => {
-    try {
-        let post = await Post.findOne({_id: req.params.id}).lean();
-        if (!post)
-            return res.status(404).json({message: "Post not found"});
-
-        let comments = await Comment.find({postId: req.params.id}).sort({creationTimestamp: "descending"}).limit(2);
-        if (!comments) //TODO Vérifier si find() peut renvoyer null ou undefined
-            return res.status(404).json({message: "Comment not found !"}); 
-        res.status(200).json(comments);
-    }
-    catch (error) {
-        console.error(error);
-        res.status(500).json({message: "Internal server error"});
-    }
-}
-
 exports.getAllComments = async (req, res, next) => {
     try {
         let post = await Post.findOne({_id: req.params.id}).lean();
         if (!post)
             return res.status(404).json({message: "Post not found"});
-        //TODO Voir si c'est une bonne idée de passer les 2 commentaires normalement déjà récupérés par getTwoComments()
-        let comments = await Comment.find({postId: req.params.id}).sort({creationTimestamp: "descending"}).skip(2);
-        if (!comments) //TODO Vérifier si find() peut renvoyer null ou undefined
-            return res.status(404).json({message: "Comment not found !"});
+        let comments = await Comment.find({postId: req.params.id}).sort({creationTimestamp: "descending"});
         res.status(200).json(comments);
     }
     catch (error) {
@@ -60,7 +40,7 @@ exports.modifyComment = async (req, res, next) => {
         if (!comment)
             return res.status(404).json({message: "Comment not found !"});
 
-        if ((comment.userId !== req.auth.userId) && (req.auth.admin !== true))
+        if (comment.userId !== req.auth.userId && req.auth.admin !== true)
         return res.status(403).json({message: "Forbidden Request"});
 
         const commentObject = {
@@ -88,7 +68,7 @@ exports.deleteComment = async (req, res, next) => {
         if (!comment)
             return res.status(404).json({message: "Comment not found"});
 
-        if ((comment.userId !== req.auth.userId) && (req.auth.admin !== true))
+        if (comment.userId !== req.auth.userId && req.auth.admin !== true)
             return res.status(403).json({message: "Forbidden Request"});
 
         await Comment.deleteOne({_id: req.params.id});

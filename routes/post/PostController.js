@@ -112,7 +112,8 @@ exports.modifyPost = async (req, res, next) => {
         res.status(200).json({message: "Post successfully modified"});
     }
     catch (error) {
-        //TODO Voir pour supprimer l'image si une erreur a lieu après l'enregistrement de la nouvelle image
+        if (req.file)
+            await fs.unlink(`images/${req.file.filename}`);
         console.error(error);
         res.status(500).json({message: "Internal server error"});
     }

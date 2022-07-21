@@ -102,7 +102,7 @@ exports.updateProfile = async (req, res, next) => {
 
         if (!user)
             return res.status(404).json({message: "User not found"});
-            
+
         if (req.file) {
             if (user.profilePictureUrl !== "") {
                 const filename = user.profilePictureUrl.split('/images/')[1];

@@ -4,7 +4,7 @@ const Post = require('./PostModel').model;
 const User = require('../user/UserModel').model;
 
 exports.createPost = async (req, res, next) => {
-    try {
+    try {//Modifier pour éviter de dupliquer le code de l'objet
         const post = req.file ?
         new Post({
             ...JSON.parse(req.body.post),
@@ -17,6 +17,7 @@ exports.createPost = async (req, res, next) => {
         })
         : new Post({
             ...req.body,
+            userId: req.auth.userId,
             imageUrl: "",
             numberOfLikes: 0,
             likeUserIds: [],
@@ -36,9 +37,7 @@ exports.getFivePosts = async (req, res, next) => {
     try {
         let posts = await Post.find()
             .sort({creationTimestamp: "descending"})
-            .skip(req.body.offset).limit(5);
-        if (!posts) //TODO Vérifier si find() peut renvoyer null ou undefined
-            return res.status(404).json({message: "Post not found !"}); 
+            .skip(req.params.page-1 *5).limit(5);
         res.status(200).json(posts);
     }
     catch (error) {
@@ -56,8 +55,6 @@ exports.getFivePostsFromUser = async (req, res, next) => {
         let posts = await Post.find({userId: req.params.id})
             .sort({creationTimestamp: "descending"})
             .skip(req.body.offset).limit(5);
-        if (!posts) //TODO Vérifier si find() peut renvoyer null ou undefined
-            return res.status(404).json({message: "Post not found !"});
         res.status(200).json(posts);
     }
     catch (error) {
@@ -85,7 +82,7 @@ exports.modifyPost = async (req, res, next) => {
         if (!post)
             return res.status(404).json({message: "Post not found !"});
 
-        if ((post.userId !== req.auth.userId) && (req.auth.admin !== true))
+        if (post.userId !== req.auth.userId && req.auth.admin !== true)
             return res.status(403).json({message: "Forbidden Request"});
 
         if (req.file) {
@@ -106,8 +103,8 @@ exports.modifyPost = async (req, res, next) => {
                 ...req.body,
                 modificationTimestamp: Date.now()
             };
-        
-        //Empêche de modifier les likes sur ce endpoint
+
+        //Empêche de modifier les likes sur ce endpoint. Plus nécessaire après vaildation des entrées utilisateur
         delete postObject.numberOfLikes;
         delete postObject.likeUserIds;
 
@@ -115,9 +112,7 @@ exports.modifyPost = async (req, res, next) => {
         res.status(200).json({message: "Post successfully modified"});
     }
     catch (error) {
-        /* TODO Voir pour supprimer l'image si une erreur a lieu après l'enregistrement de la nouvelle image
-        if (req.file)
-            await fs.unlink(`images/${req.file.filename}`); */
+        //TODO Voir pour supprimer l'image si une erreur a lieu après l'enregistrement de la nouvelle image
         console.error(error);
         res.status(500).json({message: "Internal server error"});
     }
@@ -130,16 +125,16 @@ exports.deletePost = async (req, res, next) => {
         if (!post)
             return res.status(404).json({message: "Post not found"});
 
-        if ((post.userId !== req.auth.userId) && (req.auth.admin !== true))
+        if (post.userId !== req.auth.userId && req.auth.admin !== true)
             return res.status(403).json({message: "Forbidden Request"});
+
+        await Post.deleteOne({_id: req.params.id});
+        res.status(200).json({message: "Post successfully deleted"});
 
         if (post.imageUrl !== "") {
             const filename = post.imageUrl.split('/images/')[1];
             await fs.unlink(`images/${filename}`);
         }
-
-        await Post.deleteOne({_id: req.params.id});
-        res.status(200).json({message: "Post successfully deleted"});
     }
     catch (error) {
         console.error(error);

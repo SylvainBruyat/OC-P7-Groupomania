@@ -7,6 +7,7 @@ const User = require('./UserModel').model;
 
 exports.signup = async (req, res, next) => {
     try {
+        //Remplacer par une simple Regex ?
         const schema = new passwordValidator();
         schema
             .is().min(8)
@@ -93,10 +94,11 @@ exports.getProfile = async (req, res, next) => {
 
 exports.updateProfile = async (req, res, next) => {
     try {
-        if ((req.params.id !== req.auth.userId) && (req.auth.admin !== true))
+        if (req.params.id !== req.auth.userId && req.auth.admin !== true)
             return res.status(403).json({message: "Forbidden Request"});
 
         let user = await User.findOne({_id: req.params.id}).lean(); //TODO Voir pour remplacer par findOneAndUpdate()
+        //ou utiliser save() à la fin ?
 
         if (!user)
             return res.status(404).json({message: "User not found"});
@@ -115,14 +117,12 @@ exports.updateProfile = async (req, res, next) => {
                 profilePictureUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
             }
             : {...req.body};
-
-        await User.updateOne({_id: req.params.id}, {...userObject, _id: req.params.id});
+        await User.updateOne({_id: req.params.id}, {...userObject});
         res.status(200).json({message: "User profile successfully modified"});
     }
     catch (error) {
-        /* TODO Voir pour supprimer l'image si une erreur a lieu après l'enregistrement de la nouvelle image
         if (req.file)
-            await fs.unlink(`images/${req.file.filename}`); */
+            await fs.unlink(`images/${req.file.filename}`);
         console.error(error);
         res.status(500).json({message: "Internal server error"});
     }
@@ -130,7 +130,7 @@ exports.updateProfile = async (req, res, next) => {
 
 exports.deleteProfile = async (req, res, next) => {
     try {
-        if ((req.params.id !== req.auth.userId) && (req.auth.admin !== true))
+        if (req.params.id !== req.auth.userId && req.auth.admin !== true)
             return res.status(403).json({message: "Forbidden Request"});
 
         let user = await User.findOne({_id: req.params.id});
@@ -138,13 +138,13 @@ exports.deleteProfile = async (req, res, next) => {
         if (!user)
             return res.status(404).json({message: "User not found"});
 
+        await User.deleteOne({_id: req.params.id});
+        res.status(200).json({message: "User successfully deleted"});
+
         if (user.profilePictureUrl !== "") {
             const filename = user.profilePictureUrl.split('/images/')[1];
             await fs.unlink(`images/${filename}`);
         }
-
-        await User.deleteOne({_id: req.params.id});
-        res.status(200).json({message: "User successfully deleted"});
     }
     catch (error) {
         console.error(error);

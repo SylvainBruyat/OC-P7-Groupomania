@@ -2,12 +2,11 @@ const mongoose = require('mongoose');
 
 let postDefinition = {
     userId: {type: String, required: true},
-    title: {type: String, required: false},
     text: {type: String, required: true},
     imageUrl: {type: String, required: false},
     numberOfLikes: {type: Number, required: true},
     likeUserIds: {type: Array, required: true},
-    creationTimestamp: {type: Date, required: true},
+    creationTimestamp: {type: Date, required: true}, //Essayer de raccourcir ces noms. Voir pour utiliser les timestamp par défaut de mongo
     modificationTimestamp: {type: Date, required: false}
 };
 

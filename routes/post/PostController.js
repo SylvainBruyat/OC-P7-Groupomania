@@ -2,6 +2,7 @@ const fs = require('fs/promises');
 
 const Post = require('./PostModel').model;
 const User = require('../user/UserModel').model;
+const Comment = require('../comment/CommentModel').model;
 
 exports.createPost = async (req, res, next) => {
     try {//TODO Modifier pour éviter de dupliquer le code de l'objet
@@ -130,12 +131,14 @@ exports.deletePost = async (req, res, next) => {
         if (!requestingUser)
             return res.status(403).json({message: "Forbidden request"});
 
-        let post = await Post.findOne({_id: req.params.id});
+        const post = await Post.findOne({_id: req.params.id});
         if (!post)
             return res.status(404).json({message: "Post not found"});
 
         if (post.userId !== req.auth.userId && requestingUser.admin !== true)
             return res.status(403).json({message: "Forbidden Request"});
+
+        await Comment.deleteMany({postId: req.params.id});
 
         await Post.deleteOne({_id: req.params.id});
         res.status(200).json({message: "Post successfully deleted"});

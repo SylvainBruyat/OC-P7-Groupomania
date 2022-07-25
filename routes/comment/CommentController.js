@@ -26,7 +26,7 @@ exports.getAllComments = async (req, res, next) => {
         let post = await Post.findOne({_id: req.params.postId}).lean();
         if (!post)
             return res.status(404).json({message: "Post not found"});
-        let comments = await Comment.find({postId: req.params.postId}).sort({creationTimestamp: "descending"});
+        let comments = await Comment.find({postId: req.params.postId}).sort({creationTimestamp: "descending"}).lean();
         res.status(200).json(comments);
     }
     catch (error) {
@@ -41,7 +41,7 @@ exports.modifyComment = async (req, res, next) => {
         if (!requestingUser)
             return res.status(403).json({message: "Forbidden request"});
 
-        let comment = await Comment.findOne({_id: req.params.id}).lean(); //TODO Voir pour remplacer par findOneAndUpdate()
+        let comment = await Comment.findOne({_id: req.params.id}); //TODO Voir pour remplacer par findOneAndUpdate()
         if (!comment)
             return res.status(404).json({message: "Comment not found"});
 

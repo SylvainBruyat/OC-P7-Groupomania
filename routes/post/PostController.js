@@ -37,7 +37,9 @@ exports.getFivePosts = async (req, res, next) => {
     try {
         let posts = await Post.find()
             .sort({creationTimestamp: "descending"})
-            .skip((req.query.page-1)*5).limit(5);
+            .skip((req.query.page-1)*5)
+            .limit(5)
+            .lean();
         res.status(200).json(posts);
     }
     catch (error) {
@@ -54,7 +56,9 @@ exports.getFivePostsFromUser = async (req, res, next) => {
 
         let posts = await Post.find({userId: req.params.id})
             .sort({creationTimestamp: "descending"})
-            .skip((req.query.page-1)*5).limit(5);
+            .skip((req.query.page-1)*5)
+            .limit(5)
+            .lean();
         res.status(200).json(posts);
     }
     catch (error) {
@@ -65,7 +69,7 @@ exports.getFivePostsFromUser = async (req, res, next) => {
 
 exports.getOnePost = async (req, res, next) => {
     try {
-        let post = await Post.findOne({_id: req.params.id});
+        let post = await Post.findOne({_id: req.params.id}).lean();
         if (!post)
             return res.status(404).json({message: "Post not found"});
         res.status(200).json(post);
@@ -82,7 +86,7 @@ exports.modifyPost = async (req, res, next) => {
         if (!requestingUser)
             return res.status(403).json({message: "Forbidden request"});
 
-        let post = await Post.findOne({_id: req.params.id}).lean(); //TODO Voir pour remplacer par findOneAndUpdate()
+        let post = await Post.findOne({_id: req.params.id}); //TODO Voir pour remplacer par findOneAndUpdate()
         if (!post)
             return res.status(404).json({message: "Post not found"});
 

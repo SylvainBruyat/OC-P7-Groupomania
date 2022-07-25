@@ -48,7 +48,7 @@ exports.signup = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
     try {
-        const user = await User.findOne({email: req.body.email})
+        const user = await User.findOne({email: req.body.email}).lean();
         if (!user)
             return res.status(404).json({error: "There is no account linked to this email address"});
 
@@ -103,7 +103,7 @@ exports.updateProfile = async (req, res, next) => {
         if (req.params.id !== req.auth.userId && requestingUser.admin !== true)
             return res.status(403).json({message: "Forbidden Request"});
 
-        let user = await User.findOne({_id: req.params.id}).lean(); //TODO Voir pour remplacer par findOneAndUpdate()
+        let user = await User.findOne({_id: req.params.id}); //TODO Voir pour remplacer par findOneAndUpdate()
         //ou utiliser save() à la fin ?
         if (!user)
             return res.status(404).json({message: "User not found"});

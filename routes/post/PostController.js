@@ -54,7 +54,7 @@ exports.getFivePostsFromUser = async (req, res, next) => {
 
         let posts = await Post.find({userId: req.params.id})
             .sort({creationTimestamp: "descending"})
-            .skip(req.body.offset).limit(5);
+            .skip(req.params.page-1 *5).limit(5);
         res.status(200).json(posts);
     }
     catch (error) {

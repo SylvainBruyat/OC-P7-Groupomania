@@ -1,5 +1,6 @@
 const Comment = require('./CommentModel').model;
 const Post = require('../post/PostModel').model;
+const User = require('../user/UserModel').model;
 
 exports.createComment = async (req, res, next) => {
     try {
@@ -36,11 +37,15 @@ exports.getAllComments = async (req, res, next) => {
 
 exports.modifyComment = async (req, res, next) => {
     try {
+        const requestingUser = await User.findOne({_id: req.auth.userId}).select('-password').lean();
+        if (!requestingUser)
+            return res.status(403).json({message: "Forbidden request"});
+
         let comment = await Comment.findOne({_id: req.params.id}).lean(); //TODO Voir pour remplacer par findOneAndUpdate()
         if (!comment)
-            return res.status(404).json({message: "Comment not found !"});
+            return res.status(404).json({message: "Comment not found"});
 
-        if (comment.userId !== req.auth.userId && req.auth.admin !== true)
+        if (comment.userId !== req.auth.userId && requestingUser.admin !== true)
         return res.status(403).json({message: "Forbidden Request"});
 
         const commentObject = {
@@ -63,12 +68,16 @@ exports.modifyComment = async (req, res, next) => {
 
 exports.deleteComment = async (req, res, next) => {
     try {
+        const requestingUser = await User.findOne({_id: req.auth.userId}).select('-password').lean();
+        if (!requestingUser)
+            return res.status(403).json({message: "Forbidden request"});
+
         let comment = await Comment.findOne({_id: req.params.id});
 
         if (!comment)
             return res.status(404).json({message: "Comment not found"});
 
-        if (comment.userId !== req.auth.userId && req.auth.admin !== true)
+        if (comment.userId !== req.auth.userId && requestingUser.admin !== true)
             return res.status(403).json({message: "Forbidden Request"});
 
         await Comment.deleteOne({_id: req.params.id});

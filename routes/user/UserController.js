@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs/promises');
 const passwordValidator = require('password-validator');
+const { request } = require('http');
 
 const User = require('./UserModel').model;
 
@@ -58,7 +59,7 @@ exports.login = async (req, res, next) => {
         res.status(200).json({
             userId: user._id,
             token: jwt.sign(
-                {userId: user._id, admin: user.admin},
+                {userId: user._id},
                 process.env.TOKEN_KEY,
                 {expiresIn: '24h'}
             )
@@ -72,12 +73,15 @@ exports.login = async (req, res, next) => {
 
 exports.getProfile = async (req, res, next) => {
     try {
-        let user = await User.findOne({_id: req.params.id}).select('-password').lean();
+        const requestingUser = await User.findOne({_id: req.auth.userId}).select('-password').lean();
+        if (!requestingUser)
+            return res.status(403).json({message: "Forbidden request"});
 
+        let user = await User.findOne({_id: req.params.id}).select('-password').lean();
         if (!user)
             return res.status(404).json({message: "User not found"});
 
-        if (user._id == req.auth.userId || req.auth.admin === true)
+        if (user._id == req.auth.userId || requestingUser.admin === true)
             return res.status(200).json(user);
 
         delete user.email;
@@ -92,12 +96,15 @@ exports.getProfile = async (req, res, next) => {
 
 exports.updateProfile = async (req, res, next) => {
     try {
-        if (req.params.id !== req.auth.userId && req.auth.admin !== true)
+        const requestingUser = await User.findOne({_id: req.auth.userId}).select('-password').lean();
+        if (!requestingUser)
+            return res.status(403).json({message: "Forbidden request"});
+
+        if (req.params.id !== req.auth.userId && requestingUser.admin !== true)
             return res.status(403).json({message: "Forbidden Request"});
 
         let user = await User.findOne({_id: req.params.id}).lean(); //TODO Voir pour remplacer par findOneAndUpdate()
         //ou utiliser save() à la fin ?
-
         if (!user)
             return res.status(404).json({message: "User not found"});
 
@@ -125,11 +132,14 @@ exports.updateProfile = async (req, res, next) => {
 
 exports.deleteProfile = async (req, res, next) => {
     try {
-        if (req.params.id !== req.auth.userId && req.auth.admin !== true)
+        const requestingUser = await User.findOne({_id: req.auth.userId}).select('-password').lean();
+        if (!requestingUser)
+            return res.status(403).json({message: "Forbidden request"});
+
+        if (req.params.id !== req.auth.userId && requestingUser.admin !== true)
             return res.status(403).json({message: "Forbidden Request"});
 
         let user = await User.findOne({_id: req.params.id});
-        
         if (!user)
             return res.status(404).json({message: "User not found"});
 

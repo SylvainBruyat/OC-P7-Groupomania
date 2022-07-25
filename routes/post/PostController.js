@@ -67,7 +67,7 @@ exports.getOnePost = async (req, res, next) => {
     try {
         let post = await Post.findOne({_id: req.params.id});
         if (!post)
-            return res.status(404).json({message: "Post not found !"});
+            return res.status(404).json({message: "Post not found"});
         res.status(200).json(post);
     }
     catch (error) {
@@ -78,11 +78,15 @@ exports.getOnePost = async (req, res, next) => {
 
 exports.modifyPost = async (req, res, next) => {
     try {
+        const requestingUser = await User.findOne({_id: req.auth.userId}).select('-password').lean();
+        if (!requestingUser)
+            return res.status(403).json({message: "Forbidden request"});
+
         let post = await Post.findOne({_id: req.params.id}).lean(); //TODO Voir pour remplacer par findOneAndUpdate()
         if (!post)
-            return res.status(404).json({message: "Post not found !"});
+            return res.status(404).json({message: "Post not found"});
 
-        if (post.userId !== req.auth.userId && req.auth.admin !== true)
+        if (post.userId !== req.auth.userId && requestingUser.admin !== true)
             return res.status(403).json({message: "Forbidden Request"});
 
         const postObject = req.file ?
@@ -118,12 +122,15 @@ exports.modifyPost = async (req, res, next) => {
 
 exports.deletePost = async (req, res, next) => {
     try {
-        let post = await Post.findOne({_id: req.params.id});
+        const requestingUser = await User.findOne({_id: req.auth.userId}).select('-password').lean();
+        if (!requestingUser)
+            return res.status(403).json({message: "Forbidden request"});
 
+        let post = await Post.findOne({_id: req.params.id});
         if (!post)
             return res.status(404).json({message: "Post not found"});
 
-        if (post.userId !== req.auth.userId && req.auth.admin !== true)
+        if (post.userId !== req.auth.userId && requestingUser.admin !== true)
             return res.status(403).json({message: "Forbidden Request"});
 
         await Post.deleteOne({_id: req.params.id});

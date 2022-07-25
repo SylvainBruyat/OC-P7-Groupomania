@@ -23,10 +23,10 @@ exports.createComment = async (req, res, next) => {
 
 exports.getAllComments = async (req, res, next) => {
     try {
-        let post = await Post.findOne({_id: req.params.id}).lean();
+        let post = await Post.findOne({_id: req.params.postId}).lean();
         if (!post)
             return res.status(404).json({message: "Post not found"});
-        let comments = await Comment.find({postId: req.params.id}).sort({creationTimestamp: "descending"});
+        let comments = await Comment.find({postId: req.params.postId}).sort({creationTimestamp: "descending"});
         res.status(200).json(comments);
     }
     catch (error) {
@@ -46,7 +46,7 @@ exports.modifyComment = async (req, res, next) => {
             return res.status(404).json({message: "Comment not found"});
 
         if (comment.userId !== req.auth.userId && requestingUser.admin !== true)
-        return res.status(403).json({message: "Forbidden Request"});
+            return res.status(403).json({message: "Forbidden Request"});
 
         const commentObject = {
             ...req.body,

@@ -5,6 +5,8 @@ const passwordValidator = require('password-validator');
 const { request } = require('http');
 
 const User = require('./UserModel').model;
+const Post = require('../post/PostModel').model;
+const Comment = require('../comment/CommentModel').model;
 
 exports.signup = async (req, res, next) => {
     try {
@@ -142,6 +144,9 @@ exports.deleteProfile = async (req, res, next) => {
         let user = await User.findOne({_id: req.params.id});
         if (!user)
             return res.status(404).json({message: "User not found"});
+
+        await Comment.deleteMany({userId: req.params.id});
+        await Post.deleteMany({userId: req.params.id});
 
         await User.deleteOne({_id: req.params.id});
         res.status(200).json({message: "User successfully deleted"});

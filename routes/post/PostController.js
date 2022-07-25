@@ -4,7 +4,7 @@ const Post = require('./PostModel').model;
 const User = require('../user/UserModel').model;
 
 exports.createPost = async (req, res, next) => {
-    try {//Modifier pour éviter de dupliquer le code de l'objet
+    try {//TODO Modifier pour éviter de dupliquer le code de l'objet
         const post = req.file ?
         new Post({
             ...JSON.parse(req.body.post),
@@ -85,14 +85,6 @@ exports.modifyPost = async (req, res, next) => {
         if (post.userId !== req.auth.userId && req.auth.admin !== true)
             return res.status(403).json({message: "Forbidden Request"});
 
-        if (req.file) {
-            if (post.imageUrl !== "") {
-                const filename = post.imageUrl.split('/images/')[1];
-                await fs.unlink(`images/${filename}`);
-            }
-            post.imageUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
-        }
-
         const postObject = req.file ?
             {
                 ...JSON.parse(req.body.post),
@@ -104,12 +96,17 @@ exports.modifyPost = async (req, res, next) => {
                 modificationTimestamp: Date.now()
             };
 
-        //Empêche de modifier les likes sur ce endpoint. Plus nécessaire après vaildation des entrées utilisateur
+        //Empêche de modifier les likes sur ce endpoint. Plus nécessaire après validation des entrées utilisateur
         delete postObject.numberOfLikes;
         delete postObject.likeUserIds;
 
         await Post.updateOne({_id: req.params.id}, {...postObject, _id: req.params.id});
         res.status(200).json({message: "Post successfully modified"});
+
+        const previousPostPictureName = post.imageUrl.split('/images/')[1];
+        if (previousPostPictureName) {
+            await fs.unlink(`images/${previousPostPictureName}`);
+        }
     }
     catch (error) {
         if (req.file)

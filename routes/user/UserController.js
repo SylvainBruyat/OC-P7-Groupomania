@@ -7,7 +7,7 @@ const User = require('./UserModel').model;
 
 exports.signup = async (req, res, next) => {
     try {
-        //Remplacer par une simple Regex ?
+        //TODO Remplacer par une simple Regex ?
         const schema = new passwordValidator();
         schema
             .is().min(8)
@@ -34,14 +34,12 @@ exports.signup = async (req, res, next) => {
         res.status(201).json({message: "Account created successfully"});
     }
     catch (error) {
-        console.log("error");
-        console.log(error);
         if (error.errors.email && error.errors.email.properties.type === "unique"){
             console.error(error);
             res.status(409).json({message: "An account already exists with this email address"});
         }
         else {
-            console.log(error);
+            console.error(error);
             res.status(500).json({message: "Internal server error"});
         }
     }
@@ -79,7 +77,7 @@ exports.getProfile = async (req, res, next) => {
         if (!user)
             return res.status(404).json({message: "User not found"});
 
-        if (user._id == req.auth.userId)
+        if (user._id == req.auth.userId || req.auth.admin === true)
             return res.status(200).json(user);
 
         delete user.email;
@@ -103,14 +101,6 @@ exports.updateProfile = async (req, res, next) => {
         if (!user)
             return res.status(404).json({message: "User not found"});
 
-        if (req.file) {
-            if (user.profilePictureUrl !== "") {
-                const filename = user.profilePictureUrl.split('/images/')[1];
-                await fs.unlink(`images/${filename}`);
-            }
-            user.profilePictureUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
-        }
-
         const userObject = req.file ?
             {
                 ...JSON.parse(req.body.user),
@@ -119,6 +109,11 @@ exports.updateProfile = async (req, res, next) => {
             : {...req.body};
         await User.updateOne({_id: req.params.id}, {...userObject});
         res.status(200).json({message: "User profile successfully modified"});
+
+        const previousProfilePictureName = user.profilePictureUrl.split('/images/')[1];
+        if (previousProfilePictureName) {
+            await fs.unlink(`images/${previousProfilePictureName}`);
+        }
     }
     catch (error) {
         if (req.file)

@@ -6,6 +6,7 @@ const path = require ('path');
 const dotenv = require('dotenv');
 const mongoSanitize = require('express-mongo-sanitize');
 const helmet = require("helmet");
+const rateLimit = require('express-rate-limit');
 
 const User = require('./routes/user/UserRouter');
 const Post = require('./routes/post/PostRouter');
@@ -17,6 +18,13 @@ mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD
 @groupomania.ffc77.mongodb.net/?retryWrites=true&w=majority`)
     .then(() => console.log("Connection to MongoDB successful"))
     .catch(() => console.log("Connection to MongoDB failed"));
+
+const apiLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 60,
+    standardHeaders: true,
+    legacyHeaders: false,
+});
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -31,11 +39,12 @@ app.use(mongoSanitize({allowDots: true}));
 
 /* TODO Ajouter des couches de sécurité :
     contrôle des entrées utilisateur (package joi ?),
-    limitation du nombre de requêtes (package express-rate-limit ?),
     etc.
 */
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
+
+app.use('/api', apiLimiter);
 
 app.use('/api/user', User);
 app.use('/api/post', Post);

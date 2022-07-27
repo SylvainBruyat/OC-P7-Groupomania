@@ -5,30 +5,23 @@ const User = require('../user/UserModel').model;
 const Comment = require('../comment/CommentModel').model;
 
 exports.createPost = async (req, res, next) => {
-    try {//TODO Modifier pour éviter de dupliquer le code de l'objet
-        const post = req.file ?
-        new Post({
-            ...JSON.parse(req.body.post),
+    try {
+        let post = new Post({
             userId: req.auth.userId,
-            imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
             numberOfLikes: 0,
             likeUserIds: [],
             creationTimestamp: Date.now(),
-            modificationTimestamp: null
+            modificationTimestamp: null,
         })
-        : new Post({
-            ...req.body,
-            userId: req.auth.userId,
-            imageUrl: "",
-            numberOfLikes: 0,
-            likeUserIds: [],
-            creationTimestamp: Date.now(),
-            modificationTimestamp: null
-        });
+        post.text = req.file ? JSON.parse(req.body.post).text : req.body.text;
+        post.imageUrl = req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : '';
+
         await post.save();
         return res.status(201).json({message: "Post created successfully"});
     }
     catch (error) {
+        if (req.file)
+            await fs.unlink(`images/${req.file.filename}`);
         console.error(error);
         res.status(500).json({message: "Internal server error"});
     }

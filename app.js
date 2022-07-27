@@ -19,8 +19,12 @@ mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD
     .then(() => console.log("Connection to MongoDB successful"))
     .catch(() => console.log("Connection to MongoDB failed"));
 
+/* The rate limiter may need some additional tuning once deployed in production, using the following piece of code:
+app.set('trust proxy', numberOfProxies)
+For more info: https://github.com/nfriedly/express-rate-limit#troubleshooting-proxy-issues
+ */
 const apiLimiter = rateLimit({
-    windowMs: 60 * 1000,
+    windowMs: 200 * 1000,
     max: 60,
     standardHeaders: true,
     legacyHeaders: false,

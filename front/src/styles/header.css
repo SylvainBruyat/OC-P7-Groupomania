@@ -1,0 +1,12 @@
+header {
+    border-bottom: 3px solid var(--color-tertiary);
+}
+
+header a {
+    display: flex;
+    width: 130px;
+}
+
+img {
+    width: 100%;
+}

@@ -1,0 +1,13 @@
+.signup-login-wrapper {
+    padding-top: 20px;
+}
+
+.link-button {
+    margin: 0;
+    padding: 0;
+    display: inline;
+    background-color: transparent;
+    text-decoration: underline;
+    border: none;
+    cursor: pointer;
+}

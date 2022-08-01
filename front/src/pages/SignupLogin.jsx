@@ -16,7 +16,7 @@ export default function SignupLogin() {
             ) : (
                 <SignupCard className="card" />
             )}
-            <p>
+            <p className="signup-login-message">
                 {mode === 'Connexion'
                     ? "Vous n'avez pas encore de compte ? "
                     : 'Vous avez déjà un compte ? '}

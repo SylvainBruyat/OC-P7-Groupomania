@@ -31,7 +31,7 @@
     cursor: pointer;
 }
 
-p {
+.custom-message {
     margin: 0 auto;
     max-width: 500px;
 }

@@ -11,3 +11,8 @@
     border: none;
     cursor: pointer;
 }
+
+.signup-login-message {
+    margin: 0 auto;
+    max-width: 500px;
+}

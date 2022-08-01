@@ -8,14 +8,12 @@ export default function LoginCard() {
     });
 
     const savedToken = sessionStorage.getItem('token');
-    const [token, setToken] = useState(
-        savedToken ? JSON.parse(savedToken) : []
-    );
+    const [token, setToken] = useState(savedToken ? savedToken : '');
 
     const [customMessage, setCustomMessage] = useState('');
 
     useEffect(() => {
-        sessionStorage.setItem('token', JSON.stringify(token));
+        sessionStorage.setItem('token', token);
     }, [token]);
 
     const navigate = useNavigate();
@@ -34,7 +32,9 @@ export default function LoginCard() {
                 const data = await response.json();
                 setToken(data.token);
                 //TODO Redirection à changer vers /home
-                navigate(`/profile/${data.userId}`);
+                setTimeout(() => {
+                    navigate(`/profile/${data.userId}`);
+                }, 500);
             } else if (response.status === 401) {
                 setCustomMessage('Mot de passe invalide. Veuillez réessayer');
             } else if (response.status === 404) {

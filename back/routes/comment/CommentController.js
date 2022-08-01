@@ -26,7 +26,7 @@ exports.getAllComments = async (req, res, next) => {
         let post = await Post.findOne({_id: req.params.postId}).lean();
         if (!post)
             return res.status(404).json({message: "Post not found"});
-        let comments = await Comment.find({postId: req.params.postId}).sort({creationTimestamp: "descending"}).lean();
+        let comments = await Comment.find({postId: req.params.postId}).sort({creationTimestamp: "ascending"}).lean();
         res.status(200).json(comments);
     }
     catch (error) {

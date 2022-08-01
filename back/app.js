@@ -47,7 +47,9 @@ app.use(mongoSanitize({allowDots: true}));
     etc.
 */
 
-app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/images', express.static(path.join(__dirname, 'images'), {setHeaders (res, path, stat) {
+    res.set('Cross-Origin-Resource-Policy', 'same-site')
+}}));
 
 app.use('/api', apiLimiter);
 

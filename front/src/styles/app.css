@@ -1,5 +1,15 @@
 @import './theme.css';
+
 @import './header.css';
+
 @import './signuplogin.css';
 @import './signupcard.css';
 @import './logincard.css';
+
+@import './profile.css';
+@import './post.css';
+@import './comment.css';
+
+* {
+    box-sizing: border-box;
+}

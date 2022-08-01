@@ -1,0 +1,106 @@
+.post-card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 30px;
+    border: 1px solid var(--color-tertiary);
+    border-radius: 10px;
+    background-color: white;
+}
+
+.post-card__name-text {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 5px;
+    padding-left: 10px;
+}
+
+.post-card__name-text__name-edit {
+    display: flex;
+    justify-content: space-between;
+}
+
+.post-card__name-text__name {
+    font-weight: bold;
+    font-size: 0.8em;
+    color: var(--color-tertiary);
+}
+
+.post-card__name-text p {
+    margin: 0 0 5px 0;
+}
+
+.post-card__name-text__edit-menu {
+    margin: 0 10px 0 0;
+    padding: 0;
+    width: 25px;
+    height: 25px;
+    background-color: transparent;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+}
+
+.post-card__name-text__edit-menu:hover {
+    background-color: #ededed;
+}
+
+/* .post-card__name-text__edit-menu span {
+    height: 2px;
+} */
+
+.post-card__create-time,
+.post-card__modify-time {
+    margin: 0;
+    padding-left: 10px;
+    font-size: 0.7em;
+}
+
+.post-card_picture {
+    height: 250px;
+    margin-bottom: 5px;
+    object-fit: cover;
+}
+
+.post-card__like-comment {
+    display: flex;
+    align-items: center;
+    margin: 10px;
+    padding: 10px 0;
+    border-top: 1px solid var(--color-tertiary);
+    border-bottom: 1px solid var(--color-tertiary);
+}
+
+.post-card__like-comment__like-button,
+.post-card__like-comment__comment-button {
+    display: flex;
+    align-items: center;
+    margin: 0 0 0 20px;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.post-card__like-comment__comment-button {
+    margin-left: 50px;
+}
+
+.post-card__like-comment__like-icon,
+.post-card__like-comment__comment-icon {
+    height: 20px;
+    width: 20px;
+    margin: 0 10px 0 0;
+}
+
+.liked {
+    filter: invert(88%) sepia(2%) saturate(3213%) hue-rotate(313deg)
+        brightness(93%) contrast(124%);
+}
+
+.post-card__comments {
+    margin: 0 30px;
+}

@@ -74,7 +74,16 @@ export default function Post(props) {
             if (response.status === 201) {
                 toggleLike();
             } else if (response.status === 404) {
-                setCustomMessage("Cet utilisateur n'existe pas.");
+                setCustomMessage("Ce message n'existe pas.");
+            } else if (response.status === 409) {
+                const data = await response.json();
+                if (data.message === 'Post already liked')
+                    setCustomMessage(
+                        'Vous ne pouvez pas liker plusieurs fois un post'
+                    );
+                setCustomMessage(
+                    "Vous n'avez pas de like à supprimer sur ce post"
+                );
             } else if (response.status === 500) {
                 throw new Error(
                     'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.'

@@ -9,7 +9,3 @@
 @import './profile.css';
 @import './post.css';
 @import './comment.css';
-
-* {
-    box-sizing: border-box;
-}

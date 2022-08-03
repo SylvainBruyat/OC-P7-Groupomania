@@ -1,4 +1,4 @@
-import redLogo from '../assets/icon-left-font.svg';
+import redLogo from '../assets/icon-left-font-resized.png';
 
 export default function Header() {
     return (

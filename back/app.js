@@ -24,8 +24,8 @@ app.set('trust proxy', numberOfProxies)
 For more info: https://github.com/nfriedly/express-rate-limit#troubleshooting-proxy-issues
  */
 const apiLimiter = rateLimit({
-    windowMs: 200 * 1000,
-    max: 60,
+    windowMs: 60 * 1000,
+    max: 200,
     standardHeaders: true,
     legacyHeaders: false,
 });

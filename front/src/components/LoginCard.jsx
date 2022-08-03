@@ -65,7 +65,9 @@ export default function LoginCard() {
     return (
         <div className="login-card">
             <form onSubmit={(evt) => handleSubmit(evt)}>
-                <label htmlFor="email">Adresse e-mail</label>
+                <label htmlFor="email">
+                    Adresse e-mail <span>*</span>
+                </label>
                 <input
                     type="email"
                     name="email"
@@ -75,7 +77,9 @@ export default function LoginCard() {
                     required
                     onChange={(evt) => handleChange(evt)}
                 />
-                <label htmlFor="password">Mot de passe</label>
+                <label htmlFor="password">
+                    Mot de passe <span>*</span>
+                </label>
                 <input
                     type="password"
                     name="password"
@@ -85,6 +89,9 @@ export default function LoginCard() {
                     required
                     onChange={(evt) => handleChange(evt)}
                 />
+                <p>
+                    <span>*</span>Champ requis
+                </p>
                 <button type="submit">Connexion</button>
             </form>
             {/* A refactoriser dans un composant */}

@@ -8,13 +8,17 @@
     background-color: var(--color-secondary);
 }
 
-.signup-card input {
-    margin-bottom: 5px;
-}
-
 .signup-card form {
     display: flex;
     flex-direction: column;
+}
+
+.signup-card span {
+    color: var(--color-primary);
+}
+
+.signup-card input {
+    margin-bottom: 5px;
 }
 
 .signup-card form p {

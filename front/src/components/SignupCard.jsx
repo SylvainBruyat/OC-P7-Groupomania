@@ -68,7 +68,9 @@ export default function SignupCard() {
     return (
         <div className="signup-card">
             <form onSubmit={(evt) => handleSubmit(evt)}>
-                <label htmlFor="email">Adresse e-mail</label>
+                <label htmlFor="email">
+                    Adresse e-mail <span>*</span>
+                </label>
                 <input
                     type="email"
                     name="email"
@@ -78,7 +80,9 @@ export default function SignupCard() {
                     required
                     onChange={(evt) => handleChange(evt)}
                 />
-                <label htmlFor="password">Mot de passe</label>
+                <label htmlFor="password">
+                    Mot de passe <span>*</span>
+                </label>
                 <input
                     type="password"
                     name="password"
@@ -94,7 +98,9 @@ export default function SignupCard() {
                     au moins 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère
                     spécial
                 </p>
-                <label htmlFor="firstName">Prénom</label>
+                <label htmlFor="firstName">
+                    Prénom <span>*</span>
+                </label>
                 <input
                     type="text"
                     name="firstName"
@@ -104,7 +110,9 @@ export default function SignupCard() {
                     required
                     onChange={(evt) => handleChange(evt)}
                 />
-                <label htmlFor="lastName">Nom</label>
+                <label htmlFor="lastName">
+                    Nom <span>*</span>
+                </label>
                 <input
                     type="text"
                     name="lastName"
@@ -114,6 +122,9 @@ export default function SignupCard() {
                     required
                     onChange={(evt) => handleChange(evt)}
                 />
+                <p>
+                    <span>*</span>Champ requis
+                </p>
                 <button type="submit">Inscription</button>
             </form>
             {/* A refactoriser dans un composant */}

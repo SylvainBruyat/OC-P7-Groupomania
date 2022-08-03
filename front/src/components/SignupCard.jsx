@@ -21,6 +21,13 @@ export default function SignupCard() {
                 }
             );
             if (response.status === 201) {
+                setUserInfo({
+                    email: '',
+                    password: '',
+                    firstName: '',
+                    lastName: '',
+                });
+                //TODO Remplacer (ou compléter ?) par une redirection vers la page de connexion
                 setCustomMessage(
                     'Votre compte a été créé avec succès. Vous pouvez vous y connecter dès maintenant.'
                 );
@@ -56,12 +63,6 @@ export default function SignupCard() {
     function handleSubmit(evt) {
         evt.preventDefault();
         fetchSignup(userSignupInfo);
-        setUserInfo({
-            email: '',
-            password: '',
-            firstName: '',
-            lastName: '',
-        });
     }
 
     return (

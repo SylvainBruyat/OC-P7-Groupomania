@@ -16,8 +16,12 @@ export default function Comment(props) {
     return (
         <div className="comment-card">
             <div className="comment-card__name-text">
-                <p className="comment-card__name-text__name">{props.author}</p>{' '}
-                {/* TODO Transformer le nom en lien vers le profil */}
+                <a
+                    href={`/profile/${props.author._id}`}
+                    className="comment-card__name-text__name"
+                >
+                    {`${props.author.firstName} ${props.author.lastName}`}
+                </a>
                 <p>{props.text}</p>
             </div>
             <p className="comment-card__create-time">Posté le {creationTime}</p>

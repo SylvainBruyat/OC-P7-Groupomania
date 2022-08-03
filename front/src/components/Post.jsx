@@ -10,7 +10,7 @@ export default function Post(props) {
     const [comments, setComments] = useState([]);
     const [customMessage, setCustomMessage] = useState('');
     const [like, setLike] = useState(
-        props.likeUserIds.includes(`${props.userId}`) ? 1 : 0
+        props.likeUserIds.includes(`${props.author._id}`) ? 1 : 0
     );
 
     const toggleLike = () => {
@@ -101,8 +101,12 @@ export default function Post(props) {
             <p className="custom-message">{customMessage}</p>
             <div className="post-card__name-text">
                 <div className="post-card__name-text__name-edit">
-                    <p className="post-card__name-text__name">{props.author}</p>{' '}
-                    {/* TODO Transformer le nom en lien vers le profil */}
+                    <a
+                        href={`/profile/${props.author._id}`}
+                        className="post-card__name-text__name"
+                    >
+                        {`${props.author.firstName} ${props.author.lastName}`}
+                    </a>
                     <button className="post-card__name-text__edit-menu">
                         <span>...</span>
                     </button>

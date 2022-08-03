@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 
 let postDefinition = {
-    userId: {type: String, required: true},
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     text: {type: String, required: true},
     imageUrl: {type: String, required: false},
     numberOfLikes: {type: Number, required: true},

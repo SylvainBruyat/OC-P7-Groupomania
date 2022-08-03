@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 
 let commentDefinition = {
-    userId: {type: String, required: true},
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+      },
     postId: {type: String, required: true},
     text: {type: String, required: true},
     numberOfLikes: {type: Number, required: true},

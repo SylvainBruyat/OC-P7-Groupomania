@@ -33,6 +33,7 @@ exports.getFivePosts = async (req, res, next) => {
             .sort({creationTimestamp: "descending"})
             .skip((req.query.page-1)*5)
             .limit(5)
+            .populate('userId', 'firstName lastName')
             .lean();
         res.status(200).json(posts);
     }
@@ -52,6 +53,7 @@ exports.getFivePostsFromUser = async (req, res, next) => {
             .sort({creationTimestamp: "descending"})
             .skip((req.query.page-1)*5)
             .limit(5)
+            .populate('userId', 'firstName lastName')
             .lean();
         res.status(200).json(posts);
     }
@@ -63,7 +65,9 @@ exports.getFivePostsFromUser = async (req, res, next) => {
 
 exports.getOnePost = async (req, res, next) => {
     try {
-        let post = await Post.findOne({_id: req.params.id}).lean();
+        let post = await Post.findOne({_id: req.params.id})
+            .populate('userId', 'firstName lastName')
+            .lean();
         if (!post)
             return res.status(404).json({message: "Post not found"});
         res.status(200).json(post);

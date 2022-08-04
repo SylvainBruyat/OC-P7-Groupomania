@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 
+import { AuthContext } from '../utils/Context';
 import Comment from './Comment';
 
 import likeLogoEmpty from '../assets/like-empty.svg';
@@ -13,11 +14,11 @@ export default function Post(props) {
         props.likeUserIds.includes(`${props.author._id}`) ? 1 : 0
     );
 
+    const { token } = useContext(AuthContext);
+
     const toggleLike = () => {
         setLike(like === 0 ? 1 : 0);
     };
-
-    const savedToken = sessionStorage.getItem('token');
 
     useEffect(() => {
         async function FetchComments() {
@@ -25,7 +26,7 @@ export default function Post(props) {
                 const response = await fetch(
                     `http://localhost:3000/api/comment/${props.id}`,
                     {
-                        headers: { Authorization: `Bearer ${savedToken}` },
+                        headers: { Authorization: `Bearer ${token}` },
                     }
                 );
                 if (response.status === 200) {
@@ -44,7 +45,7 @@ export default function Post(props) {
             }
         }
         FetchComments();
-    }, [props.id, savedToken]);
+    }, [props.id, token]);
 
     function formatTime(timestamp) {
         if (timestamp === null) return null;
@@ -65,7 +66,7 @@ export default function Post(props) {
                 {
                     method: 'POST',
                     headers: {
-                        Authorization: `Bearer ${savedToken}`,
+                        Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ like: likeValueToPost }),

@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import { AuthContext } from '../utils/Context';
 
 export default function LoginCard() {
     const [userLoginInfo, setUserInfo] = useState({
@@ -7,8 +9,7 @@ export default function LoginCard() {
         password: '',
     });
 
-    const savedToken = sessionStorage.getItem('token');
-    const [token, setToken] = useState(savedToken ? savedToken : '');
+    const { token, setToken } = useContext(AuthContext);
 
     const [customMessage, setCustomMessage] = useState('');
 

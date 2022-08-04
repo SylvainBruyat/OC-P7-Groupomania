@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 
-import DefaultProfilePicture from '../assets/default-profile-picture.svg';
+import { AuthContext } from '../utils/Context';
 import Post from '../components/Post';
+
+import DefaultProfilePicture from '../assets/default-profile-picture.svg';
 
 let name = '';
 let profilePicture = '';
@@ -13,7 +15,7 @@ export default function Profile() {
     const [file, setFile] = useState();
 
     const params = useParams();
-    const savedToken = sessionStorage.getItem('token');
+    const { token } = useContext(AuthContext);
 
     function handlePictureUpload(evt) {
         setFile(evt.target.files[0]);
@@ -31,7 +33,7 @@ export default function Profile() {
                 {
                     method: 'PUT',
                     headers: {
-                        Authorization: `Bearer ${savedToken}`,
+                        Authorization: `Bearer ${token}`,
                     },
                     body: formData,
                 }
@@ -63,7 +65,7 @@ export default function Profile() {
                 const response = await fetch(
                     `http://localhost:3000/api/post/user/${params.id}`,
                     {
-                        headers: { Authorization: `Bearer ${savedToken}` },
+                        headers: { Authorization: `Bearer ${token}` },
                     }
                 );
                 if (response.status === 200) {
@@ -92,7 +94,7 @@ export default function Profile() {
                 const response = await fetch(
                     `http://localhost:3000/api/user/${params.id}`,
                     {
-                        headers: { Authorization: `Bearer ${savedToken}` },
+                        headers: { Authorization: `Bearer ${token}` },
                     }
                 );
                 if (response.status === 200) {
@@ -117,7 +119,7 @@ export default function Profile() {
             }
         }
         FetchProfile();
-    }, [params, savedToken]);
+    }, [params, token]);
 
     return (
         <div className="profile-wrapper">

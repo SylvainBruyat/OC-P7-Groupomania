@@ -5,8 +5,10 @@ import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Header from './components/Header';
 
-import './styles/app.css';
 import { AuthProvider } from './utils/Context';
+import ProtectedRoute from './utils/ProtectedRoute';
+
+import './styles/app.css';
 
 export default function App() {
     return (
@@ -15,8 +17,22 @@ export default function App() {
                 <Header />
                 <Routes>
                     <Route path="/" element={<SignupLogin />} />
-                    <Route path="/home" element={<Home />} />
-                    <Route path="/profile/:id" element={<Profile />} />
+                    <Route
+                        path="/home"
+                        element={
+                            <ProtectedRoute>
+                                <Home />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/profile/:id"
+                        element={
+                            <ProtectedRoute>
+                                <Profile />
+                            </ProtectedRoute>
+                        }
+                    />
                 </Routes>
             </AuthProvider>
         </>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function SignupCard() {
+export default function SignupCard(props) {
     const [userSignupInfo, setUserInfo] = useState({
         email: '',
         password: '',
@@ -9,6 +9,8 @@ export default function SignupCard() {
     });
 
     const [customMessage, setCustomMessage] = useState('');
+
+    const { toggleMode } = props;
 
     async function fetchSignup(userSignupInfo) {
         try {
@@ -31,6 +33,9 @@ export default function SignupCard() {
                 setCustomMessage(
                     'Votre compte a été créé avec succès. Vous pouvez vous y connecter dès maintenant.'
                 );
+                setTimeout(() => {
+                    toggleMode();
+                }, 2000);
             } else if (response.status === 400) {
                 const data = await response.json();
                 if (data.message === 'Invalid password') {

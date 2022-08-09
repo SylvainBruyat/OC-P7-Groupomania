@@ -14,7 +14,7 @@ export default function SignupLogin() {
             {mode === 'Connexion' ? (
                 <LoginCard className="card" />
             ) : (
-                <SignupCard className="card" />
+                <SignupCard className="card" toggleMode={toggleMode} />
             )}
             <p className="signup-login-message">
                 {mode === 'Connexion'

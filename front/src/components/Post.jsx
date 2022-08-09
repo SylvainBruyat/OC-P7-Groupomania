@@ -6,6 +6,7 @@ import Comment from './Comment';
 import likeLogoEmpty from '../assets/like-empty.svg';
 import likeLogoFull from '../assets/like-full.svg';
 import commentLogo from '../assets/comment.svg';
+import editLogo from '../assets/edit.svg';
 
 export default function Post(props) {
     const [comments, setComments] = useState([]);
@@ -109,7 +110,7 @@ export default function Post(props) {
                         {`${props.author.firstName} ${props.author.lastName}`}
                     </a>
                     <button className="post-card__name-text__edit-menu">
-                        <span>...</span>
+                        <img src={editLogo} alt="Edit this post" />
                     </button>
                 </div>
                 <p>{props.text}</p>

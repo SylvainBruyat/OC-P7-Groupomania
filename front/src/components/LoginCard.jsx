@@ -1,5 +1,5 @@
-import { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useContext } from 'react';
+import { /* useLocation,  */ useNavigate } from 'react-router-dom';
 
 import { AuthContext } from '../utils/Context';
 
@@ -9,17 +9,16 @@ export default function LoginCard() {
         password: '',
     });
 
-    const { token, setToken } = useContext(AuthContext);
+    const { handleLogin } = useContext(AuthContext);
 
     const [customMessage, setCustomMessage] = useState('');
 
-    useEffect(() => {
-        sessionStorage.setItem('token', token);
-    }, [token]);
-
     const navigate = useNavigate();
+    //TODO Décommenter ces 2 lignes avant livraison pour gérer la redirection post-login
+    //const location = useLocation();
+    //const origin = location.state?.from?.pathname || '/home';
 
-    async function FetchLogin(userInfo) {
+    async function FetchLogin() {
         try {
             const response = await fetch(
                 'http://localhost:3000/api/user/login',
@@ -31,11 +30,8 @@ export default function LoginCard() {
             );
             if (response.status === 200) {
                 const data = await response.json();
-                setToken(data.token);
-                //TODO Redirection à changer vers /home
-                setTimeout(() => {
-                    navigate(`/profile/${data.userId}`);
-                }, 500);
+                await handleLogin(data.token);
+                navigate(`/profile/${data.userId}`); //TODO Remplacer par navigate(origin) avant livraison
             } else if (response.status === 401) {
                 setCustomMessage('Mot de passe invalide. Veuillez réessayer');
             } else if (response.status === 404) {

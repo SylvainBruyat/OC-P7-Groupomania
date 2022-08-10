@@ -5,9 +5,8 @@ import { AuthContext } from '../utils/Context';
 
 import redLogo from '../assets/icon-left-font-resized.png';
 
-export default function Header(props) {
-    const userId = props; //TODO props non définies dans App.jsx. Probablement pas possible d'y obtenir l'userId.
-    const { handleLogout } = useContext(AuthContext);
+export default function Header() {
+    const { handleLogout, userId } = useContext(AuthContext);
 
     return (
         <header>

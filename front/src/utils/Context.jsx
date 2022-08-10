@@ -5,25 +5,30 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const savedToken = sessionStorage.getItem('token');
+    const savedUserId = sessionStorage.getItem('userId');
     const [token, setToken] = useState(savedToken ? savedToken : null);
+    const [userId, setUserId] = useState(savedUserId ? savedUserId : null);
     const navigate = useNavigate();
 
     useEffect(() => {
         sessionStorage.setItem('token', token);
-    }, [token]);
+        sessionStorage.setItem('userId', userId);
+    }, [token, userId]);
 
-    const handleLogin = async (receivedToken) => {
-        setToken(receivedToken);
+    const handleLogin = async (loginData) => {
+        setToken(loginData.token);
+        setUserId(loginData.userId);
     };
 
     const handleLogout = async () => {
         setToken(null);
+        setUserId(null);
         navigate('/');
     };
 
     return (
         <AuthContext.Provider
-            value={{ token, setToken, handleLogin, handleLogout }}
+            value={{ token, setToken, userId, handleLogin, handleLogout }}
         >
             {children}
         </AuthContext.Provider>

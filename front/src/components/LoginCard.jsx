@@ -30,7 +30,7 @@ export default function LoginCard() {
             );
             if (response.status === 200) {
                 const data = await response.json();
-                await handleLogin(data.token);
+                await handleLogin(data);
                 navigate(`/profile/${data.userId}`); //TODO Remplacer par navigate(origin) avant livraison
             } else if (response.status === 401) {
                 setCustomMessage('Mot de passe invalide. Veuillez réessayer');

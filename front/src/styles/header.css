@@ -7,11 +7,10 @@ header {
 
 header a {
     display: flex;
-    width: 200px;
 }
 
 header img {
-    width: 100%;
+    width: 200px;
 }
 
 .header-links {
@@ -25,10 +24,11 @@ header img {
 
 .active-link {
     font-weight: bold;
+    background-color: var(--color-secondary);
 }
 
 .active-link:visited {
-    color: var(--color-primary);
+    color: var(--color-tertiary);
 }
 
 .logout-button {

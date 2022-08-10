@@ -1,4 +1,7 @@
 header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     border-bottom: 3px solid var(--color-tertiary);
 }
 
@@ -9,4 +12,32 @@ header a {
 
 header img {
     width: 100%;
+}
+
+.header-links {
+    display: flex;
+}
+
+.header-links li {
+    list-style: none;
+    color: black;
+}
+
+.active-link {
+    font-weight: bold;
+}
+
+.active-link:visited {
+    color: var(--color-primary);
+}
+
+.logout-button {
+    margin: 0 20px 0 0;
+    padding: 0;
+    display: inline;
+    background-color: transparent;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    color: var(--color-primary);
 }

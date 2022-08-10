@@ -3,10 +3,10 @@ import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../utils/Context';
 import Comment from './Comment';
 
-import likeLogoEmpty from '../assets/like-empty.svg';
-import likeLogoFull from '../assets/like-full.svg';
-import commentLogo from '../assets/comment.svg';
-import editLogo from '../assets/edit.svg';
+import likeLogoEmpty from '../assets/icons/like-empty.svg';
+import likeLogoFull from '../assets/icons/like-full.svg';
+import commentLogo from '../assets/icons/comment.svg';
+import editLogo from '../assets/icons/edit.svg';
 
 export default function Post(props) {
     const [comments, setComments] = useState([]);

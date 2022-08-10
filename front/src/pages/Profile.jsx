@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { AuthContext } from '../utils/Context';
 import Post from '../components/Post';
 
-import DefaultProfilePicture from '../assets/default-profile-picture.svg';
+import DefaultProfilePicture from '../assets/icons/default-profile-picture.svg';
 
 let name = '';
 let profilePicture = '';
@@ -122,7 +122,7 @@ export default function Profile() {
     }, [params, token]);
 
     return (
-        <div className="profile-wrapper">
+        <section className="profile-wrapper">
             {/* A refactoriser dans un composant */}
             <p className="custom-message">{customMessage}</p>
             <div className="image-wrapper">
@@ -161,6 +161,6 @@ export default function Profile() {
                     modificationTimestamp={post.modificationTimestamp}
                 />
             ))}
-        </div>
+        </section>
     );
 }

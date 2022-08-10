@@ -29,3 +29,19 @@ export const AuthProvider = ({ children }) => {
         </AuthContext.Provider>
     );
 };
+
+export const PostEditContext = createContext();
+
+export const PostEditProvider = ({ children }) => {
+    const [postEditMode, setPostEditMode] = useState(false);
+
+    const togglePostEditMode = () => {
+        setPostEditMode(!postEditMode);
+    };
+
+    return (
+        <PostEditContext.Provider value={{ postEditMode, togglePostEditMode }}>
+            {children}
+        </PostEditContext.Provider>
+    );
+};

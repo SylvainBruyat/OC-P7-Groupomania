@@ -48,7 +48,7 @@
 
 .post-card__name-text__edit-menu img {
     height: 100%;
-    width: 100%px;
+    width: 100%;
     filter: invert(33%) sepia(7%) saturate(1381%) hue-rotate(195deg)
         brightness(92%) contrast(91%);
 }

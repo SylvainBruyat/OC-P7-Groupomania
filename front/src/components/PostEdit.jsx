@@ -3,6 +3,7 @@ import { useContext, useState } from 'react';
 import { PostEditContext, AuthContext } from '../utils/Context';
 
 import closeButton from '../assets/icons/close-button.svg';
+import imageUploadButton from '../assets/icons/image-upload-button.svg';
 
 export default function PostEdit() {
     const [postContent, setPostContent] = useState({ text: '', image: null });
@@ -11,8 +12,11 @@ export default function PostEdit() {
     const { token } = useContext(AuthContext);
 
     function handlePostContentChange(evt) {
-        const { name, value } = evt.target;
-        setPostContent({ ...postContent, [name]: value });
+        if (evt.target.name === 'text') {
+            setPostContent({ ...postContent, text: evt.target.value });
+        } else {
+            setPostContent({ ...postContent, image: evt.target.files[0] });
+        }
     }
 
     function handlePostPublishing(evt) {
@@ -22,14 +26,35 @@ export default function PostEdit() {
 
     async function PublishPost() {
         try {
-            const response = await fetch('http://localhost:3000/api/post', {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(postContent),
-            });
+            let options = {};
+            if (postContent.image === null) {
+                options = {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(postContent),
+                };
+            } else {
+                let formData = new FormData();
+                formData.append('post', postContent.text);
+                formData.append('image', postContent.image);
+
+                options = {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: formData,
+                };
+            }
+
+            const response = await fetch(
+                'http://localhost:3000/api/post',
+                options
+            );
+
             if (response.status === 201) {
                 setPostContent({ text: '', image: null });
                 togglePostEditMode();
@@ -67,9 +92,28 @@ export default function PostEdit() {
                         onChange={(evt) => handlePostContentChange(evt)}
                         required
                     ></textarea>
-                    <button type="submit" className="post-edit__submit-button">
-                        Publier
-                    </button>
+                    <div className="post-edit__bottom-bar">
+                        <label htmlFor="post-image-upload">
+                            {/* eslint-disable-next-line jsx-a11y/img-redundant-alt */}
+                            <img
+                                src={imageUploadButton}
+                                alt="Ajouter une image au message"
+                                className="post-edit__image-upload-button"
+                            />
+                            <input
+                                type="file"
+                                name="image"
+                                id="post-image-upload"
+                                onChange={(evt) => handlePostContentChange(evt)}
+                            />
+                        </label>
+                        <button
+                            type="submit"
+                            className="post-edit__submit-button"
+                        >
+                            Publier
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

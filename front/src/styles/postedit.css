@@ -62,8 +62,28 @@
     outline: none;
 }
 
+.post-edit__bottom-bar {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    column-gap: 20px;
+}
+
+.post-edit__image-upload-button {
+    height: 30px;
+    width: 30px;
+    filter: invert(33%) sepia(7%) saturate(1381%) hue-rotate(195deg)
+        brightness(92%) contrast(91%);
+    cursor: pointer;
+}
+
+#post-image-upload {
+    display: none;
+}
+
 .post-edit__submit-button {
-    margin: 10px;
+    height: 30px;
+    flex-grow: 1;
     font-size: 1.4em;
     color: white;
     background-color: var(--color-tertiary);

@@ -13,7 +13,7 @@ exports.createPost = async (req, res, next) => {
             creationTimestamp: Date.now(),
             modificationTimestamp: null,
         })
-        post.text = req.file ? JSON.parse(req.body.post).text : req.body.text;
+        post.text = req.file ? req.body.post : req.body.text;
         post.imageUrl = req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : '';
 
         await post.save();

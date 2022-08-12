@@ -7,7 +7,7 @@ export default function ProtectedRoute({ children }) {
     const { token } = useContext(AuthContext);
     const location = useLocation();
 
-    if (token === 'null')
+    if (token === null || token === 'null')
         return <Navigate to="/" replace state={{ from: location }} />;
 
     return children;

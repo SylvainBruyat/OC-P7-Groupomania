@@ -97,7 +97,8 @@ export default function PostEdit() {
                             {/* eslint-disable-next-line jsx-a11y/img-redundant-alt */}
                             <img
                                 src={imageUploadButton}
-                                alt="Ajouter une image au message"
+                                alt="Ajouter une image"
+                                title="Ajouter une image"
                                 className="post-edit__image-upload-button"
                             />
                             <input

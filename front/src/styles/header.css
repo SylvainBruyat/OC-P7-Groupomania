@@ -19,6 +19,9 @@ header img {
 
 .header-links li {
     list-style: none;
+}
+
+.header-links a {
     color: black;
 }
 

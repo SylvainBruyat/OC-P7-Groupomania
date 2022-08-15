@@ -88,7 +88,7 @@ exports.modifyPost = async (req, res, next) => {
         if (!post)
             return res.status(404).json({message: "Post not found"});
 
-        if (post.userId !== req.auth.userId && requestingUser.admin !== true)
+        if (post.userId != req.auth.userId && requestingUser.admin !== true)
             return res.status(403).json({message: "Forbidden Request"});
 
         const postObject = req.file ?
@@ -132,7 +132,7 @@ exports.deletePost = async (req, res, next) => {
         if (!post)
             return res.status(404).json({message: "Post not found"});
 
-        if (post.userId !== req.auth.userId && requestingUser.admin !== true)
+        if (post.userId != req.auth.userId && requestingUser.admin !== true)
             return res.status(403).json({message: "Forbidden Request"});
 
         await Comment.deleteMany({postId: req.params.id});

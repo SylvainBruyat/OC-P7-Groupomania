@@ -24,6 +24,8 @@ export default function Post(props) {
         setLike(like === 0 ? 1 : 0);
     };
 
+    const deletePostDialog = document.getElementById('deletePostDialog');
+
     useEffect(() => {
         async function FetchComments() {
             try {
@@ -98,6 +100,10 @@ export default function Post(props) {
             setCustomMessage(`${error.message}`);
             console.error(error);
         }
+    }
+
+    function showDeletePostDialog() {
+        deletePostDialog.showModal();
     }
 
     async function handleDelete(postId) {
@@ -229,9 +235,29 @@ export default function Post(props) {
                     ))}
                 </div>
             </div>
+            <dialog id="deletePostDialog">
+                <form method="dialog">
+                    <p>Souhaitez-vous réellement supprimer ce message ?</p>
+                    <div className="deletePostDialog__button-div">
+                        <button
+                            value="cancel"
+                            className="deletePostDialog__button"
+                        >
+                            Annuler
+                        </button>
+                        <button
+                            value="confirm"
+                            className="deletePostDialog__button"
+                            onClick={() => handleDelete(props.id)}
+                        >
+                            Confirmer
+                        </button>
+                    </div>
+                </form>
+            </dialog>
             <div
                 className="delete-button-container"
-                onClick={() => handleDelete(props.id)}
+                onClick={() => showDeletePostDialog()}
             >
                 <img
                     src={deleteLogo}

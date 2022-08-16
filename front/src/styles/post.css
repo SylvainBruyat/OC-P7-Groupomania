@@ -113,12 +113,40 @@
     margin: 0 30px;
 }
 
+#deletePostDialog {
+    border-radius: 15px;
+    border: 3px solid var(--color-tertiary);
+}
+
+#deletePostDialog p {
+    margin-top: 0px;
+}
+
+.deletePostDialog__button-div {
+    display: flex;
+    justify-content: space-around;
+}
+
+.deletePostDialog__button {
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: var(--color-secondary);
+    cursor: pointer;
+}
+
+.deletePostDialog__button:hover {
+    background-color: var(--color-primary);
+    color: white;
+}
+
 .delete-button-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 30px;
     width: 30px;
+    margin-left: 5px;
     border-radius: 15px;
     cursor: pointer;
 }

@@ -1,8 +1,9 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { AuthContext } from '../utils/Context';
+import { AuthContext, PostPublishContext } from '../utils/Context';
 import Post from '../components/Post';
+import PostPublish from '../components/PostPublish';
 
 import DefaultProfilePicture from '../assets/icons/default-profile-picture.svg';
 
@@ -11,10 +12,12 @@ let profilePicture = '';
 
 export default function Profile() {
     const [customMessage, setCustomMessage] = useState('');
-    const [posts, setPosts] = useState([]);
+    const [posts, setPosts] = useState([]); // Remplacer par useReducer pour pouvoir rajouter les posts à chaque appel API ?
     const [file, setFile] = useState();
 
     const params = useParams();
+    const { postPublishMode, togglePostPublishMode } =
+        useContext(PostPublishContext);
     const { token } = useContext(AuthContext);
 
     function handlePictureUpload(evt) {
@@ -71,7 +74,8 @@ export default function Profile() {
                 if (response.status === 200) {
                     const data = await response.json();
                     setPosts(data); //TODO A corriger : écrase les posts précédents si on en redemande 5 nouveaux
-                    // Créer le nouveau tableau de posts avec Array.prototype.push.apply(posts, data);
+                    // Utiliser useReducer à la place de useState ?
+                    // Utiliser le spread Operator ?
                 } else if (response.status === 403) {
                     setCustomMessage(
                         "Vous n'avez pas les droits pour accéder à cette ressource."
@@ -122,45 +126,51 @@ export default function Profile() {
     }, [params, token]);
 
     return (
-        <section className="profile-wrapper">
-            {/* A refactoriser dans un composant */}
-            <p className="custom-message">{customMessage}</p>
-            <div className="image-wrapper">
-                <img
-                    src={
-                        profilePicture === ''
-                            ? DefaultProfilePicture
-                            : profilePicture
-                    }
-                    alt={name}
-                    className="profile-picture"
-                />
-                <form onSubmit={handlePictureSubmit}>
-                    <input
-                        type="file"
-                        accept=".jpg, .jpeg, .png, .gif, .webp"
-                        onChange={handlePictureUpload}
+        <>
+            <button onClick={togglePostPublishMode}>
+                Cliquez ici pour rédiger un post
+            </button>
+            {postPublishMode ? <PostPublish /> : <></>}
+            <section className="profile-wrapper">
+                {/* A refactoriser dans un composant */}
+                <p className="custom-message">{customMessage}</p>
+                <div className="image-wrapper">
+                    <img
+                        src={
+                            profilePicture === ''
+                                ? DefaultProfilePicture
+                                : profilePicture
+                        }
+                        alt={name}
+                        className="profile-picture"
                     />
-                    <button type="submit">Confirmer</button>
-                </form>
-            </div>
-            <div className="profile-info">
-                <h1>{name}</h1>
-            </div>
-            {posts.map((post) => (
-                <Post
-                    key={post._id}
-                    id={post._id}
-                    author={post.userId}
-                    userId={post.userId}
-                    text={post.text}
-                    imageUrl={post.imageUrl}
-                    numberOfLikes={post.numberOfLikes}
-                    likeUserIds={post.likeUserIds}
-                    creationTimestamp={post.creationTimestamp}
-                    modificationTimestamp={post.modificationTimestamp}
-                />
-            ))}
-        </section>
+                    <form onSubmit={handlePictureSubmit}>
+                        <input
+                            type="file"
+                            accept=".jpg, .jpeg, .png, .gif, .webp"
+                            onChange={handlePictureUpload}
+                        />
+                        <button type="submit">Confirmer</button>
+                    </form>
+                </div>
+                <div className="profile-info">
+                    <h1>{name}</h1>
+                </div>
+                {posts.map((post) => (
+                    <Post
+                        key={post._id}
+                        id={post._id}
+                        author={post.userId}
+                        userId={post.userId}
+                        text={post.text}
+                        imageUrl={post.imageUrl}
+                        numberOfLikes={post.numberOfLikes}
+                        likeUserIds={post.likeUserIds}
+                        creationTimestamp={post.creationTimestamp}
+                        modificationTimestamp={post.modificationTimestamp}
+                    />
+                ))}
+            </section>
+        </>
     );
 }

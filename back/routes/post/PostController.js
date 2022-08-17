@@ -93,7 +93,7 @@ exports.modifyPost = async (req, res, next) => {
 
         const postObject = req.file ?
             {
-                ...JSON.parse(req.body.post),
+                text: req.body.post,
                 imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
                 modificationTimestamp: Date.now()
             }
@@ -101,7 +101,7 @@ exports.modifyPost = async (req, res, next) => {
                 ...req.body,
                 modificationTimestamp: Date.now()
             };
-
+        
         //Empêche de modifier les likes sur ce endpoint. Plus nécessaire après validation des entrées utilisateur
         delete postObject.numberOfLikes;
         delete postObject.likeUserIds;

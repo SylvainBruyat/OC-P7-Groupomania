@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from 'react';
 
 import { AuthContext } from '../utils/Context';
 import Comment from './Comment';
-//import PostEdit from '../components/PostEdit';
+import PostEdit from './PostEdit';
 
 import likeLogoEmpty from '../assets/icons/like-empty.svg';
 import likeLogoFull from '../assets/icons/like-full.svg';
@@ -16,9 +16,13 @@ export default function Post(props) {
     const [like, setLike] = useState(
         props.likeUserIds.includes(`${props.author._id}`) ? 1 : 0
     );
+    const [postEditMode, setPostEditMode] = useState(false);
 
     const { token } = useContext(AuthContext);
-    /* const { postEditMode, togglePostEditMode } = useContext(PostEditContext); */
+
+    const togglePostEditMode = () => {
+        setPostEditMode(!postEditMode);
+    };
 
     const toggleLike = () => {
         setLike(like === 0 ? 1 : 0);
@@ -154,19 +158,20 @@ export default function Post(props) {
                                 src={editLogo}
                                 alt="Bouton Modifier"
                                 title="Modifier ce message"
-                                /* onClick={togglePostEditMode} */
+                                onClick={togglePostEditMode}
                             />
                         </button>
-                        {/* {postEditMode ? (
-                        <PostEdit
-                            id={props.id}
-                            userId={props.userId}
-                            text={props.text}
-                            imageUrl={props.imageUrl}
-                        />
-                    ) : (
-                        <></>
-                    )} */}
+                        {postEditMode ? (
+                            <PostEdit
+                                id={props.id}
+                                userId={props.userId}
+                                text={props.text}
+                                imageUrl={props.imageUrl}
+                                togglePostEditMode={togglePostEditMode}
+                            />
+                        ) : (
+                            <></>
+                        )}
                     </div>
                     <p>{props.text}</p>
                 </div>

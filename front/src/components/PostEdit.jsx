@@ -1,15 +1,18 @@
 import { useContext, useState } from 'react';
 
-import { PostEditContext, AuthContext } from '../utils/Context';
+import { AuthContext } from '../utils/Context';
 
 import closeButton from '../assets/icons/close-button.svg';
 import imageUploadButton from '../assets/icons/image-upload-button.svg';
 
-export default function PostEdit() {
-    const [postContent, setPostContent] = useState({ text: '', image: null });
+export default function PostEdit(props) {
+    const [postContent, setPostContent] = useState({
+        text: props.text,
+        image: null,
+    });
 
-    const { togglePostEditMode } = useContext(PostEditContext);
     const { token } = useContext(AuthContext);
+    const { togglePostEditMode } = props;
 
     function handlePostContentChange(evt) {
         if (evt.target.name === 'text') {
@@ -19,17 +22,17 @@ export default function PostEdit() {
         }
     }
 
-    function handlePostPublishing(evt) {
+    function handlePostEditing(evt) {
         evt.preventDefault();
-        PublishPost();
+        EditPost();
     }
 
-    async function PublishPost() {
+    async function EditPost() {
         try {
             let options = {};
             if (postContent.image === null) {
                 options = {
-                    method: 'POST',
+                    method: 'PUT',
                     headers: {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json',
@@ -42,7 +45,7 @@ export default function PostEdit() {
                 formData.append('image', postContent.image);
 
                 options = {
-                    method: 'POST',
+                    method: 'PUT',
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -51,11 +54,11 @@ export default function PostEdit() {
             }
 
             const response = await fetch(
-                'http://localhost:3000/api/post',
+                `http://localhost:3000/api/post/${props.id}`,
                 options
             );
 
-            if (response.status === 201) {
+            if (response.status === 200) {
                 setPostContent({ text: '', image: null });
                 togglePostEditMode();
             } else if (response.status === 500) {
@@ -72,7 +75,7 @@ export default function PostEdit() {
         <div className="post-edit__background">
             <div className="post-edit__interface">
                 <div className="post-edit__top-bar">
-                    <h2>Rédiger un message</h2>
+                    <h2>Modifier un message</h2>
                     <img
                         src={closeButton}
                         alt="Fermer l'interface d'écriture de post"
@@ -82,13 +85,13 @@ export default function PostEdit() {
                 </div>
                 <form
                     className="post-edit__form"
-                    onSubmit={(evt) => handlePostPublishing(evt)}
+                    onSubmit={(evt) => handlePostEditing(evt)}
                 >
                     <textarea
                         id="text"
                         name="text"
                         placeholder="Ecrivez votre message ici"
-                        value={postContent.postText}
+                        value={postContent.text}
                         onChange={(evt) => handlePostContentChange(evt)}
                         required
                     ></textarea>

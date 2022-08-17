@@ -5,7 +5,7 @@ import Home from './pages/Home';
 import Profile from './pages/Profile';
 import Header from './components/Header';
 
-import { AuthProvider, PostEditProvider } from './utils/Context';
+import { AuthProvider, PostPublishProvider } from './utils/Context';
 import ProtectedRoute from './utils/ProtectedRoute';
 
 import './styles/app.css';
@@ -15,7 +15,7 @@ export default function App() {
         <>
             <AuthProvider>
                 <Header />
-                <PostEditProvider>
+                <PostPublishProvider>
                     <Routes>
                         <Route path="/" element={<SignupLogin />} />
                         <Route
@@ -35,7 +35,7 @@ export default function App() {
                             }
                         />
                     </Routes>
-                </PostEditProvider>
+                </PostPublishProvider>
             </AuthProvider>
         </>
     );

@@ -35,18 +35,20 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
-export const PostEditContext = createContext();
+export const PostPublishContext = createContext();
 
-export const PostEditProvider = ({ children }) => {
-    const [postEditMode, setPostEditMode] = useState(false);
+export const PostPublishProvider = ({ children }) => {
+    const [postPublishMode, setPostPublishMode] = useState(false);
 
-    const togglePostEditMode = () => {
-        setPostEditMode(!postEditMode);
+    const togglePostPublishMode = () => {
+        setPostPublishMode(!postPublishMode);
     };
 
     return (
-        <PostEditContext.Provider value={{ postEditMode, togglePostEditMode }}>
+        <PostPublishContext.Provider
+            value={{ postPublishMode, togglePostPublishMode }}
+        >
             {children}
-        </PostEditContext.Provider>
+        </PostPublishContext.Provider>
     );
 };

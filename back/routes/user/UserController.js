@@ -112,7 +112,6 @@ exports.updateProfile = async (req, res, next) => {
 
         const userObject = req.file ?
             {
-                ...JSON.parse(req.body.user),
                 profilePictureUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
             }
             : {...req.body};

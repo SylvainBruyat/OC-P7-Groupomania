@@ -20,6 +20,9 @@ export default function Profile() {
         useContext(PostPublishContext);
     const { token } = useContext(AuthContext);
 
+    let pageNumber = 1;
+    console.log('pageNumber après initialisation : ', pageNumber);
+
     function handlePictureUpload(evt) {
         setFile(evt.target.files[0]);
     }
@@ -63,19 +66,31 @@ export default function Profile() {
     }
 
     useEffect(() => {
+        window.onscroll = function () {
+            if (
+                window.innerHeight + window.scrollY >=
+                document.body.offsetHeight
+            ) {
+                console.log('Bas de page');
+                pageNumber++;
+                console.log('pageNumber après incrémentation : ', pageNumber);
+                FetchFivePosts();
+            }
+        };
+
         async function FetchFivePosts() {
             try {
                 const response = await fetch(
-                    `http://localhost:3000/api/post/user/${params.id}`,
+                    `http://localhost:3000/api/post/user/${params.id}?page=${pageNumber}`,
                     {
                         headers: { Authorization: `Bearer ${token}` },
                     }
                 );
                 if (response.status === 200) {
                     const data = await response.json();
-                    setPosts(data); //TODO A corriger : écrase les posts précédents si on en redemande 5 nouveaux
-                    // Utiliser useReducer à la place de useState ?
-                    // Utiliser le spread Operator ?
+                    setPosts((posts) => [...posts, ...data]);
+                    //setPosts((posts) => posts.concat(data)); Autre solution qui fonctionne
+                    console.log('posts : ', posts);
                 } else if (response.status === 403) {
                     setCustomMessage(
                         "Vous n'avez pas les droits pour accéder à cette ressource."

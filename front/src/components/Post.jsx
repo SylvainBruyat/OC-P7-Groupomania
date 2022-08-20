@@ -3,6 +3,8 @@ import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../utils/Context';
 import Comment from './Comment';
 import PostEdit from './PostEdit';
+import { DeletePost, LikePost } from '../services/post.service';
+import { GetAllComments } from '../services/comment.service';
 
 import likeLogoEmpty from '../assets/icons/like-empty.svg';
 import likeLogoFull from '../assets/icons/like-full.svg';
@@ -32,27 +34,9 @@ export default function Post(props) {
 
     useEffect(() => {
         async function FetchComments() {
-            try {
-                const response = await fetch(
-                    `http://localhost:3000/api/comment/${props.id}`,
-                    {
-                        headers: { Authorization: `Bearer ${token}` },
-                    }
-                );
-                if (response.status === 200) {
-                    const data = await response.json();
-                    setComments(data);
-                } else if (response.status === 404) {
-                    setCustomMessage("Ce message n'existe pas.");
-                } else if (response.status === 500) {
-                    throw new Error(
-                        'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.'
-                    );
-                } else throw new Error('Erreur inconnue');
-            } catch (error) {
-                setCustomMessage(`${error.message}`);
-                console.error(error);
-            }
+            const response = await GetAllComments(props.id, token);
+            if (response.status) setComments(response.comments);
+            else setCustomMessage(response);
         }
         FetchComments();
     }, [props.id, token]);
@@ -69,41 +53,9 @@ export default function Post(props) {
     const modificationTime = formatTime(props.modificationTimestamp);
 
     async function handleLike(postId) {
-        try {
-            const likeValueToPost = like === 0 ? 1 : 0;
-            const response = await fetch(
-                `http://localhost:3000/api/post/${postId}/like`,
-                {
-                    method: 'POST',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ like: likeValueToPost }),
-                }
-            );
-            if (response.status === 201) {
-                toggleLike();
-            } else if (response.status === 404) {
-                setCustomMessage("Ce message n'existe pas.");
-            } else if (response.status === 409) {
-                const data = await response.json();
-                if (data.message === 'Post already liked')
-                    setCustomMessage(
-                        'Vous ne pouvez pas liker plusieurs fois un post'
-                    );
-                setCustomMessage(
-                    "Vous n'avez pas de like à supprimer sur ce post"
-                );
-            } else if (response.status === 500) {
-                throw new Error(
-                    'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.'
-                );
-            } else throw new Error('Erreur inconnue');
-        } catch (error) {
-            setCustomMessage(`${error.message}`);
-            console.error(error);
-        }
+        const response = await LikePost(postId, like, token);
+        if (response.status) toggleLike();
+        else setCustomMessage(response);
     }
 
     function showDeletePostDialog() {
@@ -111,33 +63,10 @@ export default function Post(props) {
     }
 
     async function handleDelete(postId) {
-        try {
-            const response = await fetch(
-                `http://localhost:3000/api/post/${postId}`,
-                {
-                    method: 'DELETE',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-            if (response.status === 200) {
-                //TODO Recharger la page (ou le moins d'éléments possibles) pour faire disparaitre le post supprimé
-            } else if (response.status === 403) {
-                setCustomMessage(
-                    "Vous n'avez pas les droits pour effectuer cette action."
-                );
-            } else if (response.status === 404) {
-                setCustomMessage("Ce profil n'existe pas.");
-            } else if (response.status === 500) {
-                throw new Error(
-                    'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.'
-                );
-            } else throw new Error('Erreur inconnue');
-        } catch (error) {
-            setCustomMessage(`${error.message}`);
-            console.error(error);
-        }
+        const response = await DeletePost(postId, token);
+        if (response.status) {
+            //TODO Recharger la page (ou le moins d'éléments possibles) pour faire disparaitre le post supprimé
+        } else setCustomMessage(response);
     }
 
     return (

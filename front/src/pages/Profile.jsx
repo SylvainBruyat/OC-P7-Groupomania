@@ -4,6 +4,8 @@ import { useParams } from 'react-router-dom';
 import { AuthContext, PostPublishContext } from '../utils/Context';
 import Post from '../components/Post';
 import PostPublish from '../components/PostPublish';
+import { GetFivePostsFromUser } from '../services/post.service';
+import { GetProfile, ModifyProfile } from '../services/user.service';
 
 import DefaultProfilePicture from '../assets/icons/default-profile-picture.svg';
 
@@ -21,117 +23,57 @@ export default function Profile() {
     const { token } = useContext(AuthContext);
 
     let pageNumber = 1;
-    console.log('pageNumber après initialisation : ', pageNumber);
-
     function handlePictureUpload(evt) {
         setFile(evt.target.files[0]);
     }
 
     async function handlePictureSubmit(evt) {
         evt.preventDefault();
-        try {
-            let formData = new FormData();
+        let formData = new FormData();
+        formData.append('image', file);
 
-            formData.append('image', file);
-
-            const response = await fetch(
-                `http://localhost:3000/api/user/${params.id}`,
-                {
-                    method: 'PUT',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: formData,
-                }
-            );
-            if (response.status === 200) {
-                console.log('Image de profil correctement enregistrée.');
-                //TODO Afficher l'image nouvellement chargée
-                //FetchProfile() n'est pas accessible ici
-            } else if (response.status === 403) {
-                setCustomMessage(
-                    "Vous n'avez pas les droits pour effectuer cette action."
-                );
-            } else if (response.status === 404) {
-                setCustomMessage("Ce profil n'existe pas.");
-            } else if (response.status === 500) {
-                throw new Error(
-                    'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.'
-                );
-            } else throw new Error('Erreur inconnue');
-        } catch (error) {
-            setCustomMessage(`${error.message}`);
-            console.error(error);
-        }
+        const response = await ModifyProfile(params.id, formData, token);
+        if (response.status) console.log(response.message);
+        else setCustomMessage(response);
     }
 
     useEffect(() => {
-        window.onscroll = function () {
+        window.onscroll = async function () {
             if (
                 window.innerHeight + window.scrollY >=
                 document.body.offsetHeight
             ) {
-                console.log('Bas de page');
                 pageNumber++;
-                console.log('pageNumber après incrémentation : ', pageNumber);
-                FetchFivePosts();
+                const response = await GetFivePostsFromUser(
+                    params.id,
+                    pageNumber,
+                    token
+                );
+                if (response.status)
+                    setPosts((posts) => [...posts, ...response.newPosts]);
+                else setCustomMessage(response);
             }
         };
 
-        async function FetchFivePosts() {
-            try {
-                const response = await fetch(
-                    `http://localhost:3000/api/post/user/${params.id}?page=${pageNumber}`,
-                    {
-                        headers: { Authorization: `Bearer ${token}` },
-                    }
-                );
-                if (response.status === 200) {
-                    const data = await response.json();
-                    setPosts((posts) => [...posts, ...data]);
-                    //setPosts((posts) => posts.concat(data)); Autre solution qui fonctionne
-                    console.log('posts : ', posts);
-                } else if (response.status === 403) {
-                    setCustomMessage(
-                        "Vous n'avez pas les droits pour accéder à cette ressource."
-                    );
-                } else if (response.status === 404) {
-                    setCustomMessage("Cet utilisateur n'existe pas.");
-                } else if (response.status === 500) {
-                    throw new Error(
-                        'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.'
-                    );
-                } else throw new Error('Erreur inconnue');
-            } catch (error) {
-                setCustomMessage(`${error.message}`);
-                console.error(error);
-            }
-        }
-
         async function FetchProfile() {
             try {
-                const response = await fetch(
-                    `http://localhost:3000/api/user/${params.id}`,
-                    {
-                        headers: { Authorization: `Bearer ${token}` },
-                    }
-                );
-                if (response.status === 200) {
-                    const data = await response.json();
-                    name = `${data.firstName} ${data.lastName}`;
-                    profilePicture = data.profilePictureUrl;
-                    FetchFivePosts();
-                } else if (response.status === 403) {
-                    setCustomMessage(
-                        "Vous n'avez pas les droits pour accéder à cette ressource."
+                const response = await GetProfile(params.id, token);
+                if (response.status) {
+                    name = `${response.profileData.firstName} ${response.profileData.lastName}`;
+                    profilePicture = response.profileData.profilePictureUrl;
+
+                    const postsResponse = await GetFivePostsFromUser(
+                        params.id,
+                        pageNumber,
+                        token
                     );
-                } else if (response.status === 404) {
-                    setCustomMessage("Ce profil n'existe pas.");
-                } else if (response.status === 500) {
-                    throw new Error(
-                        'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.'
-                    );
-                } else throw new Error('Erreur inconnue');
+                    if (postsResponse.status) {
+                        setPosts((posts) => [
+                            ...posts,
+                            ...postsResponse.newPosts,
+                        ]);
+                    } else setCustomMessage(postsResponse);
+                } else setCustomMessage(response);
             } catch (error) {
                 setCustomMessage(`${error.message}`);
                 console.error(error);

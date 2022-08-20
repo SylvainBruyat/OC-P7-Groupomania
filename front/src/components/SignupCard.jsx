@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { Signup } from '../services/user.service';
+
 export default function SignupCard(props) {
     const [userSignupInfo, setUserInfo] = useState({
         email: '',
@@ -12,62 +14,27 @@ export default function SignupCard(props) {
 
     const { toggleMode } = props;
 
-    async function fetchSignup(userSignupInfo) {
-        try {
-            const response = await fetch(
-                'http://localhost:3000/api/user/signup',
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(userSignupInfo),
-                }
-            );
-            if (response.status === 201) {
-                setUserInfo({
-                    email: '',
-                    password: '',
-                    firstName: '',
-                    lastName: '',
-                });
-                //TODO Remplacer (ou compléter ?) par une redirection vers la page de connexion
-                setCustomMessage(
-                    'Votre compte a été créé avec succès. Vous pouvez vous y connecter dès maintenant.'
-                );
-                setTimeout(() => {
-                    toggleMode();
-                }, 2000);
-            } else if (response.status === 400) {
-                const data = await response.json();
-                if (data.message === 'Invalid password') {
-                    //TODO Exploiter data.failedCriteria pour indiquer quels critères ne sont pas respectés
-                    setCustomMessage(
-                        'Votre mot de passe ne correspond pas aux critères demandés. Veuillez réessayer.'
-                    );
-                }
-            } else if (response.status === 409) {
-                setCustomMessage(
-                    'Un compte existe déjà avec cette adresse e-mail. Veuillez utiliser le formulaire de connection.'
-                );
-            } else if (response.status === 500) {
-                throw new Error(
-                    'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.'
-                );
-            } else throw new Error('Erreur inconnue');
-        } catch (error) {
-            setCustomMessage(`${error.message}`);
-            console.error(error);
-        }
-    }
-
     function handleChange(evt) {
         const { name, value } = evt.target;
         setUserInfo({ ...userSignupInfo, [name]: value });
         setCustomMessage('');
     }
 
-    function handleSubmit(evt) {
+    async function handleSubmit(evt) {
         evt.preventDefault();
-        fetchSignup(userSignupInfo);
+        const response = await Signup(userSignupInfo);
+        if (response.status) {
+            setUserInfo({
+                email: '',
+                password: '',
+                firstName: '',
+                lastName: '',
+            });
+            setCustomMessage(response.message);
+            setTimeout(() => {
+                toggleMode();
+            }, 2000);
+        } else setCustomMessage(response);
     }
 
     return (

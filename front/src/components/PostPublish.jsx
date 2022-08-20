@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react';
 
 import { PostPublishContext, AuthContext } from '../utils/Context';
+import { CreatePost } from '../services/post.service';
 
 import closeButton from '../assets/icons/close-button.svg';
 import imageUploadButton from '../assets/icons/image-upload-button.svg';
@@ -25,47 +26,11 @@ export default function PostPublish() {
     }
 
     async function PublishPost() {
-        try {
-            let options = {};
-            if (postContent.image === null) {
-                options = {
-                    method: 'POST',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(postContent),
-                };
-            } else {
-                let formData = new FormData();
-                formData.append('post', postContent.text);
-                formData.append('image', postContent.image);
-
-                options = {
-                    method: 'POST',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: formData,
-                };
-            }
-
-            const response = await fetch(
-                'http://localhost:3000/api/post',
-                options
-            );
-
-            if (response.status === 201) {
-                setPostContent({ text: '', image: null });
-                togglePostPublishMode();
-            } else if (response.status === 500) {
-                throw new Error(
-                    'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.'
-                );
-            } else throw new Error('Erreur inconnue');
-        } catch (error) {
-            console.error(error);
-        }
+        const response = await CreatePost(postContent, token);
+        if (response.status) {
+            setPostContent({ text: '', image: null });
+            togglePostPublishMode();
+        } else throw new Error(response);
     }
 
     return (

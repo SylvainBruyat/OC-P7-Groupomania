@@ -2,6 +2,7 @@ import { useState, useContext } from 'react';
 import { /* useLocation,  */ useNavigate } from 'react-router-dom';
 
 import { AuthContext } from '../utils/Context';
+import { Login } from '../services/user.service';
 
 export default function LoginCard() {
     const [userLoginInfo, setUserInfo] = useState({
@@ -18,45 +19,18 @@ export default function LoginCard() {
     //const location = useLocation();
     //const origin = location.state?.from?.pathname || '/home';
 
-    async function FetchLogin() {
-        try {
-            const response = await fetch(
-                'http://localhost:3000/api/user/login',
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(userLoginInfo),
-                }
-            );
-            if (response.status === 200) {
-                const data = await response.json();
-                await handleLogin(data);
-                navigate(`/profile/${data.userId}`); //TODO Remplacer par navigate(origin) avant livraison
-            } else if (response.status === 401) {
-                setCustomMessage('Mot de passe invalide. Veuillez réessayer');
-            } else if (response.status === 404) {
-                setCustomMessage(
-                    "Il n'y a pas de compte associé à cette adresse e-mail. Veuillez utiliser le formulaire d'inscription."
-                );
-            } else if (response.status === 500) {
-                throw new Error(
-                    'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.'
-                );
-            } else throw new Error('Erreur inconnue');
-        } catch (error) {
-            setCustomMessage(`${error.message}`);
-            console.error(error);
-        }
-    }
-
     function handleChange(evt) {
         const { name, value } = evt.target;
         setUserInfo({ ...userLoginInfo, [name]: value });
     }
 
-    function handleSubmit(evt) {
+    async function handleSubmit(evt) {
         evt.preventDefault();
-        FetchLogin(userLoginInfo);
+        const response = await Login(userLoginInfo);
+        if (response.status) {
+            await handleLogin(response.data);
+            navigate(`/profile/${response.data.userId}`); //TODO Remplacer par navigate(origin) avant livraison
+        } else setCustomMessage(response);
     }
 
     return (

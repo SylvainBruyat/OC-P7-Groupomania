@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react';
 
 import { AuthContext } from '../utils/Context';
+import { ModifyPost } from '../services/post.service';
 
 import closeButton from '../assets/icons/close-button.svg';
 import imageUploadButton from '../assets/icons/image-upload-button.svg';
@@ -28,47 +29,11 @@ export default function PostEdit(props) {
     }
 
     async function EditPost() {
-        try {
-            let options = {};
-            if (postContent.image === null) {
-                options = {
-                    method: 'PUT',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(postContent),
-                };
-            } else {
-                let formData = new FormData();
-                formData.append('post', postContent.text);
-                formData.append('image', postContent.image);
-
-                options = {
-                    method: 'PUT',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: formData,
-                };
-            }
-
-            const response = await fetch(
-                `http://localhost:3000/api/post/${props.id}`,
-                options
-            );
-
-            if (response.status === 200) {
-                setPostContent({ text: '', image: null });
-                togglePostEditMode();
-            } else if (response.status === 500) {
-                throw new Error(
-                    'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.'
-                );
-            } else throw new Error('Erreur inconnue');
-        } catch (error) {
-            console.error(error);
-        }
+        const response = await ModifyPost(props.id, postContent, token);
+        if (response.status) {
+            setPostContent({ text: '', image: null });
+            togglePostEditMode();
+        } else throw new Error(response);
     }
 
     return (

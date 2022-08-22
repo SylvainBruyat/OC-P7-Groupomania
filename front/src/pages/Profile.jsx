@@ -40,8 +40,9 @@ export default function Profile() {
     useEffect(() => {
         window.onscroll = async function () {
             if (
+                window.location.href.includes('profile') &&
                 window.innerHeight + window.scrollY >=
-                document.body.offsetHeight
+                    document.body.offsetHeight
             ) {
                 pageNumber++;
                 const response = await GetFivePostsFromUser(
@@ -80,7 +81,7 @@ export default function Profile() {
             }
         }
         FetchProfile();
-    }, [params, token]);
+    }, [pageNumber, params, token]);
 
     return (
         <>

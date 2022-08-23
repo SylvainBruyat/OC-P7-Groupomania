@@ -7,8 +7,10 @@
 @import './signupcard.css';
 @import './logincard.css';
 
-@import './profile.css';
+@import './home.css';
 @import './post.css';
 @import './comment.css';
+
+@import './profile.css';
 
 @import './postedit.css';

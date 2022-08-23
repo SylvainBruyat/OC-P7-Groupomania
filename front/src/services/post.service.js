@@ -26,11 +26,29 @@ export async function CreatePost(postContent, token) {
 
         const response = await fetch('http://localhost:3000/api/post', options);
 
-        if (response.status === 201) {
-            return { status: response.status };
-        } else if (response.status === 500) {
+        if (response.status === 201) return { status: response.status };
+        else if (response.status === 500)
             return 'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.';
-        } else return 'Erreur inconnue';
+        else return 'Erreur inconnue';
+    } catch (error) {
+        return error;
+    }
+}
+
+export async function GetFivePosts(pageNumber, token) {
+    try {
+        const response = await fetch(
+            `http://localhost:3000/api/post?page=${pageNumber}`,
+            {
+                headers: { Authorization: `Bearer ${token}` },
+            }
+        );
+        if (response.status === 200) {
+            const newPosts = await response.json();
+            return { status: response.status, newPosts };
+        } else if (response.status === 500)
+            return 'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.';
+        else return 'Erreur inconnue';
     } catch (error) {
         return error;
     }
@@ -51,6 +69,26 @@ export async function GetFivePostsFromUser(userId, pageNumber, token) {
             return "Vous n'avez pas les droits pour accéder à cette ressource.";
         else if (response.status === 404)
             return "Cet utilisateur n'existe pas.";
+        else if (response.status === 500)
+            return 'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.';
+        else return 'Erreur inconnue';
+    } catch (error) {
+        return error;
+    }
+}
+
+export async function GetOnePost(postId, token) {
+    try {
+        const response = await fetch(
+            `http://localhost:3000/api/post/single/${postId}`,
+            {
+                headers: { Authorization: `Bearer ${token}` },
+            }
+        );
+        if (response.status === 200) {
+            const newPost = await response.json();
+            return { status: response.status, newPost };
+        } else if (response.status === 404) return "Ce message n'existe pas.";
         else if (response.status === 500)
             return 'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.';
         else return 'Erreur inconnue';

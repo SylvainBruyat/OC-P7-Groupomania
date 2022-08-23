@@ -13,7 +13,7 @@ export default function PostEdit(props) {
     });
 
     const { token } = useContext(AuthContext);
-    const { togglePostEditMode } = props;
+    const { togglePostEditMode, refreshPost } = props;
 
     function handlePostContentChange(evt) {
         if (evt.target.name === 'text') {
@@ -33,6 +33,7 @@ export default function PostEdit(props) {
         if (response.status) {
             setPostContent({ text: '', image: null });
             togglePostEditMode();
+            refreshPost(props.id);
         } else throw new Error(response);
     }
 

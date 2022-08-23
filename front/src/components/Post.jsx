@@ -3,7 +3,7 @@ import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../utils/Context';
 import Comment from './Comment';
 import PostEdit from './PostEdit';
-import { DeletePost, LikePost } from '../services/post.service';
+import { LikePost } from '../services/post.service';
 import { GetAllComments } from '../services/comment.service';
 
 import likeLogoEmpty from '../assets/icons/like-empty.svg';
@@ -13,14 +13,14 @@ import editLogo from '../assets/icons/edit.svg';
 import deleteLogo from '../assets/icons/delete-button.svg';
 
 export default function Post(props) {
+    const { handleDelete, refreshPost } = props;
     const [comments, setComments] = useState([]);
     const [customMessage, setCustomMessage] = useState('');
+    const { token, userId } = useContext(AuthContext);
     const [like, setLike] = useState(
-        props.likeUserIds.includes(`${props.author._id}`) ? 1 : 0
+        props.likeUserIds.includes(`${userId}`) ? 1 : 0
     );
     const [postEditMode, setPostEditMode] = useState(false);
-
-    const { token } = useContext(AuthContext);
 
     const togglePostEditMode = () => {
         setPostEditMode(!postEditMode);
@@ -54,19 +54,14 @@ export default function Post(props) {
 
     async function handleLike(postId) {
         const response = await LikePost(postId, like, token);
-        if (response.status) toggleLike();
-        else setCustomMessage(response);
+        if (response.status) {
+            toggleLike();
+            refreshPost(postId);
+        } else setCustomMessage(response);
     }
 
     function showDeletePostDialog() {
         deletePostDialog.showModal();
-    }
-
-    async function handleDelete(postId) {
-        const response = await DeletePost(postId, token);
-        if (response.status) {
-            //TODO Recharger la page (ou le moins d'éléments possibles) pour faire disparaitre le post supprimé
-        } else setCustomMessage(response);
     }
 
     return (
@@ -97,6 +92,7 @@ export default function Post(props) {
                                 text={props.text}
                                 imageUrl={props.imageUrl}
                                 togglePostEditMode={togglePostEditMode}
+                                refreshPost={refreshPost}
                             />
                         ) : (
                             <></>
@@ -129,16 +125,12 @@ export default function Post(props) {
                                 className="post-card__like-comment__like-icon"
                                 src={likeLogoEmpty}
                                 alt="Liker"
-                                height={20}
-                                width={20}
                             />
                         ) : (
                             <img
                                 className="post-card__like-comment__like-icon liked"
                                 src={likeLogoFull}
                                 alt="Liker"
-                                height={20}
-                                width={20}
                             />
                         )}
                     </button>

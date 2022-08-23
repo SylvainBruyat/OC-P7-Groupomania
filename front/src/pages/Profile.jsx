@@ -4,7 +4,11 @@ import { useParams } from 'react-router-dom';
 import { AuthContext, PostPublishContext } from '../utils/Context';
 import Post from '../components/Post';
 import PostPublish from '../components/PostPublish';
-import { GetFivePostsFromUser } from '../services/post.service';
+import {
+    GetFivePostsFromUser,
+    GetOnePost,
+    DeletePost,
+} from '../services/post.service';
 import { GetProfile, ModifyProfile } from '../services/user.service';
 
 import DefaultProfilePicture from '../assets/icons/default-profile-picture.svg';
@@ -14,7 +18,7 @@ let profilePicture = '';
 
 export default function Profile() {
     const [customMessage, setCustomMessage] = useState('');
-    const [posts, setPosts] = useState([]); // Remplacer par useReducer pour pouvoir rajouter les posts à chaque appel API ?
+    const [posts, setPosts] = useState([]);
     const [file, setFile] = useState();
 
     const params = useParams();
@@ -35,6 +39,23 @@ export default function Profile() {
         const response = await ModifyProfile(params.id, formData, token);
         if (response.status) console.log(response.message);
         else setCustomMessage(response);
+    }
+
+    async function handleDelete(postId) {
+        const response = await DeletePost(postId, token);
+        if (response.status) {
+            setPosts(posts.filter((post) => post._id !== postId));
+        } else setCustomMessage(response);
+    }
+
+    async function refreshPost(postId) {
+        const response = await GetOnePost(postId, token);
+        setPosts(
+            posts.map((post) => {
+                if (post._id !== postId) return post;
+                else return response.newPost;
+            })
+        );
     }
 
     useEffect(() => {
@@ -126,6 +147,8 @@ export default function Profile() {
                         likeUserIds={post.likeUserIds}
                         creationTimestamp={post.creationTimestamp}
                         modificationTimestamp={post.modificationTimestamp}
+                        handleDelete={handleDelete}
+                        refreshPost={refreshPost}
                     />
                 ))}
             </section>

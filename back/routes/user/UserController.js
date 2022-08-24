@@ -116,7 +116,7 @@ exports.updateProfile = async (req, res, next) => {
             }
             : {...req.body};
         await User.updateOne({_id: req.params.id}, {...userObject});
-        res.status(200).json({message: "User profile successfully modified"});
+        res.status(200).json({message: "User profile successfully modified", profilePictureUrl: userObject.profilePictureUrl});
 
         const previousProfilePictureName = user.profilePictureUrl.split('/images/')[1];
         if (previousProfilePictureName) {

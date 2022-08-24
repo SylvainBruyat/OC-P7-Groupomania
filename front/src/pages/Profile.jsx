@@ -9,22 +9,28 @@ import {
     GetOnePost,
     DeletePost,
 } from '../services/post.service';
-import { GetProfile, ModifyProfile } from '../services/user.service';
+import {
+    GetProfile,
+    ModifyProfile,
+    DeleteProfile,
+} from '../services/user.service';
 
 import DefaultProfilePicture from '../assets/icons/default-profile-picture.svg';
 
 let name = '';
-let profilePicture = '';
 
 export default function Profile() {
     const [customMessage, setCustomMessage] = useState('');
     const [posts, setPosts] = useState([]);
     const [file, setFile] = useState();
+    const [profilePicture, setProfilePicture] = useState('');
 
     const params = useParams();
     const { postPublishMode, togglePostPublishMode } =
         useContext(PostPublishContext);
-    const { token } = useContext(AuthContext);
+    const { token, handleLogout } = useContext(AuthContext);
+
+    const deleteProfileDialog = document.getElementById('deleteProfileDialog');
 
     let pageNumber = 1;
     function handlePictureUpload(evt) {
@@ -37,11 +43,21 @@ export default function Profile() {
         formData.append('image', file);
 
         const response = await ModifyProfile(params.id, formData, token);
-        if (response.status) console.log(response.message);
+        if (response.status) setProfilePicture(response.profilePictureUrl);
         else setCustomMessage(response);
     }
 
-    async function handleDelete(postId) {
+    function showDeletePostDialog() {
+        deleteProfileDialog.showModal();
+    }
+
+    async function handleDeleteProfile(userId) {
+        const response = await DeleteProfile(userId, token);
+        if (response.status) handleLogout();
+        else setCustomMessage(response);
+    }
+
+    async function handleDeletePost(postId) {
         const response = await DeletePost(postId, token);
         if (response.status) {
             setPosts(posts.filter((post) => post._id !== postId));
@@ -86,7 +102,7 @@ export default function Profile() {
                 const response = await GetProfile(params.id, token);
                 if (response.status) {
                     name = `${response.profileData.firstName} ${response.profileData.lastName}`;
-                    profilePicture = response.profileData.profilePictureUrl;
+                    setProfilePicture(response.profileData.profilePictureUrl);
 
                     const postsResponse = await GetFivePostsFromUser(
                         params.id,
@@ -136,8 +152,39 @@ export default function Profile() {
                         <button type="submit">Confirmer</button>
                     </form>
                 </div>
+                <dialog id="deleteProfileDialog">
+                    <form method="dialog">
+                        <p>Souhaitez-vous réellement supprimer ce profil ?</p>
+                        <p className="alert">Cette action est irréversible.</p>
+                        <p>
+                            Tous vos messages et commentaires et toutes vos
+                            données seront définitivement supprimés.
+                        </p>
+                        <div className="deleteProfileDialog__button-div">
+                            <button
+                                value="cancel"
+                                className="deleteProfileDialog__button"
+                            >
+                                Annuler
+                            </button>
+                            <button
+                                value="confirm"
+                                className="deleteProfileDialog__button"
+                                onClick={() => handleDeleteProfile(params.id)}
+                            >
+                                Confirmer
+                            </button>
+                        </div>
+                    </form>
+                </dialog>
                 <div className="profile-info">
                     <h1>{name}</h1>
+                    <button
+                        className="profile-delete-button"
+                        onClick={() => showDeletePostDialog()}
+                    >
+                        Supprimer le profil
+                    </button>
                 </div>
                 {posts.map((post) => (
                     <Post
@@ -151,7 +198,7 @@ export default function Profile() {
                         likeUserIds={post.likeUserIds}
                         creationTimestamp={post.creationTimestamp}
                         modificationTimestamp={post.modificationTimestamp}
-                        handleDelete={handleDelete}
+                        handleDeletePost={handleDeletePost}
                         refreshPost={refreshPost}
                     />
                 ))}

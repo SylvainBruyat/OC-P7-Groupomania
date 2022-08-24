@@ -28,11 +28,55 @@
     cursor: pointer;
 }
 
+#deleteProfileDialog {
+    border-radius: 15px;
+    border: 3px solid var(--color-tertiary);
+}
+
+#deleteProfileDialog p {
+    margin-top: 0px;
+    text-align: center;
+}
+
+.alert {
+    color: var(--color-primary);
+}
+
+.deleteProfileDialog__button-div {
+    display: flex;
+    justify-content: space-around;
+}
+
+.deleteProfileDialog__button {
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: var(--color-secondary);
+    cursor: pointer;
+}
+
+.deleteProfileDialog__button:hover {
+    background-color: var(--color-primary);
+    color: white;
+}
+
 .profile-info {
     width: 100%;
+    display: flex;
+    justify-content: space-between;
 }
 
 .profile-info h1 {
     font-size: 1.2em;
     font-weight: normal;
+}
+
+.profile-delete-button {
+    margin: 0 20px 0 0;
+    padding: 0;
+    display: inline;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-primary);
 }

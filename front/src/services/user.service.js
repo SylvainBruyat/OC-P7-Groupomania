@@ -84,14 +84,40 @@ export async function ModifyProfile(userId, formData, token) {
                 body: formData,
             }
         );
-        if (response.status === 200)
+        if (response.status === 200) {
+            const data = await response.json();
             return {
                 status: response.status,
-                message: 'Image de profil correctement enregistrée.',
+                profilePictureUrl: data.profilePictureUrl,
             };
-        else if (response.status === 403)
+        } else if (response.status === 403)
             return "Vous n'avez pas les droits pour effectuer cette action.";
         else if (response.status === 404) return "Ce profil n'existe pas.";
+        else if (response.status === 500)
+            return 'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.';
+        else return 'Erreur inconnue';
+    } catch (error) {
+        return error;
+    }
+}
+
+export async function DeleteProfile(userId, token) {
+    try {
+        const response = await fetch(
+            `http://localhost:3000/api/user/${userId}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        if (response.status === 200) return { status: response.status };
+        else if (response.status === 403)
+            return "Vous n'avez pas les droits pour effectuer cette action.";
+        else if (response.status === 404)
+            return "Cet utilisateur n'existe pas.";
         else if (response.status === 500)
             return 'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.';
         else return 'Erreur inconnue';

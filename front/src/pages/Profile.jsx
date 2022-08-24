@@ -48,6 +48,10 @@ export default function Profile() {
         } else setCustomMessage(response);
     }
 
+    async function insertPost(newPost) {
+        setPosts((posts) => [newPost, ...posts]);
+    }
+
     async function refreshPost(postId) {
         const response = await GetOnePost(postId, token);
         setPosts(
@@ -109,7 +113,7 @@ export default function Profile() {
             <button onClick={togglePostPublishMode}>
                 Cliquez ici pour rédiger un post
             </button>
-            {postPublishMode ? <PostPublish /> : <></>}
+            {postPublishMode ? <PostPublish insertPost={insertPost} /> : <></>}
             <section className="profile-wrapper">
                 {/* A refactoriser dans un composant */}
                 <p className="custom-message">{customMessage}</p>

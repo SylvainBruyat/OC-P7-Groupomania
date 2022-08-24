@@ -16,8 +16,9 @@ exports.createPost = async (req, res, next) => {
         post.text = req.file ? req.body.post : req.body.text;
         post.imageUrl = req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : '';
 
-        await post.save();
-        return res.status(201).json({message: "Post created successfully"});
+        const savedPost = await post.save();
+        await savedPost.populate('userId', 'firstName lastName');
+        return res.status(201).json({message: "Post created successfully", post: savedPost});
     }
     catch (error) {
         if (req.file)

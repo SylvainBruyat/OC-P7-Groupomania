@@ -26,8 +26,10 @@ export async function CreatePost(postContent, token) {
 
         const response = await fetch('http://localhost:3000/api/post', options);
 
-        if (response.status === 201) return { status: response.status };
-        else if (response.status === 500)
+        if (response.status === 201) {
+            const data = await response.json();
+            return { status: response.status, newPost: data.post };
+        } else if (response.status === 500)
             return 'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.';
         else return 'Erreur inconnue';
     } catch (error) {

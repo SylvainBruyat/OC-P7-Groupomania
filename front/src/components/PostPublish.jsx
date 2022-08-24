@@ -6,11 +6,12 @@ import { CreatePost } from '../services/post.service';
 import closeButton from '../assets/icons/close-button.svg';
 import imageUploadButton from '../assets/icons/image-upload-button.svg';
 
-export default function PostPublish() {
+export default function PostPublish(props) {
     const [postContent, setPostContent] = useState({ text: '', image: null });
 
     const { togglePostPublishMode } = useContext(PostPublishContext);
     const { token } = useContext(AuthContext);
+    const { insertPost } = props;
 
     function handlePostContentChange(evt) {
         if (evt.target.name === 'text') {
@@ -28,6 +29,7 @@ export default function PostPublish() {
     async function PublishPost() {
         const response = await CreatePost(postContent, token);
         if (response.status) {
+            insertPost(response.newPost);
             setPostContent({ text: '', image: null });
             togglePostPublishMode();
         } else throw new Error(response);

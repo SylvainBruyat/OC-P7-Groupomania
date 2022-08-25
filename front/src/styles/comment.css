@@ -16,6 +16,7 @@
 }
 
 .comment-card__name-text__name {
+    width: fit-content;
     font-weight: bold;
     font-size: 0.8em;
     color: var(--color-tertiary);

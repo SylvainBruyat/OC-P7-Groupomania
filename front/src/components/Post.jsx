@@ -3,6 +3,7 @@ import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../utils/Context';
 import Comment from './Comment';
 import PostEdit from './PostEdit';
+import CommentPublish from './CommentPublish';
 import { LikePost } from '../services/post.service';
 import { GetAllComments } from '../services/comment.service';
 
@@ -17,13 +18,19 @@ export default function Post(props) {
     const [comments, setComments] = useState([]);
     const [customMessage, setCustomMessage] = useState('');
     const { token, userId } = useContext(AuthContext);
+
     const [like, setLike] = useState(
         props.likeUserIds.includes(`${userId}`) ? 1 : 0
     );
     const [postEditMode, setPostEditMode] = useState(false);
+    const [commentPublishMode, setcommentPublishMode] = useState(false);
 
     const togglePostEditMode = () => {
         setPostEditMode(!postEditMode);
+    };
+
+    const toggleCommentPublishMode = () => {
+        setcommentPublishMode(!commentPublishMode);
     };
 
     const toggleLike = () => {
@@ -58,6 +65,10 @@ export default function Post(props) {
             toggleLike();
             refreshPost(postId);
         } else setCustomMessage(response);
+    }
+
+    async function insertComment(newComment) {
+        setComments((comments) => [...comments, newComment]);
     }
 
     function showDeletePostDialog() {
@@ -137,7 +148,10 @@ export default function Post(props) {
                     <span>
                         {props.numberOfLikes > 0 ? props.numberOfLikes : null}
                     </span>
-                    <button className="post-card__like-comment__comment-button">
+                    <button
+                        className="post-card__like-comment__comment-button"
+                        onClick={toggleCommentPublishMode}
+                    >
                         <img
                             className="post-card__like-comment__comment-icon"
                             src={commentLogo}
@@ -145,6 +159,15 @@ export default function Post(props) {
                         />
                         <span>Commenter</span>
                     </button>
+                    {commentPublishMode ? (
+                        <CommentPublish
+                            postId={props.id}
+                            toggleCommentPublishMode={toggleCommentPublishMode}
+                            insertComment={insertComment}
+                        />
+                    ) : (
+                        <></>
+                    )}
                 </div>
                 <div className="post-card__comments">
                     {comments.map((comment) => (

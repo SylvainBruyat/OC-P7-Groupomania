@@ -12,8 +12,9 @@ exports.createComment = async (req, res, next) => {
             creationTimestamp: Date.now(),
             modificationTimestamp: null
         });
-        await comment.save();
-        return res.status(201).json({message: "Comment created successfully"});
+        const savedComment = await comment.save();
+        await savedComment.populate('userId', 'firstName lastName');
+        return res.status(201).json({message: "Comment created successfully", comment: savedComment});
     }
     catch (error) {
         console.error(error);
@@ -49,7 +50,7 @@ exports.modifyComment = async (req, res, next) => {
         if (!comment)
             return res.status(404).json({message: "Comment not found"});
 
-        if (comment.userId !== req.auth.userId && requestingUser.admin !== true)
+        if (comment.userId != req.auth.userId && requestingUser.admin !== true)
             return res.status(403).json({message: "Forbidden Request"});
 
         const commentObject = {
@@ -81,7 +82,7 @@ exports.deleteComment = async (req, res, next) => {
         if (!comment)
             return res.status(404).json({message: "Comment not found"});
 
-        if (comment.userId !== req.auth.userId && requestingUser.admin !== true)
+        if (comment.userId != req.auth.userId && requestingUser.admin !== true)
             return res.status(403).json({message: "Forbidden Request"});
 
         await Comment.deleteOne({_id: req.params.id});

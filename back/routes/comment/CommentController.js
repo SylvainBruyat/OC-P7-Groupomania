@@ -106,7 +106,7 @@ exports.likeComment = async (req, res, next) => {
             case 0:
                 if (userAlreadyLiked) {
                     await Comment.updateOne({_id: req.params.id}, {$inc: {numberOfLikes: -1}, $pull: {likeUserIds: req.auth.userId}});
-                    return res.status(201).json({message: "Like removed"});
+                    break;
                 }
                 else {
                     return res.status(409).json({message: "No like to remove on this comment"});
@@ -118,11 +118,14 @@ exports.likeComment = async (req, res, next) => {
                 }
                 else {
                     await Comment.updateOne({_id: req.params.id}, {$inc: {numberOfLikes: 1}, $push: {likeUserIds: req.auth.userId}});
-                    return res.status(201).json({message: "Like taken into acount"});
+                    break;
                 }
             default :
                 return res.status(400).json({message: "Invalid request"});
         }
+        comment = await Comment.findOne({_id: req.params.id});
+        await comment.populate('userId', 'firstName lastName')
+        return res.status(201).json({message: "Like taken into acount", comment});
     }
     catch (error) {
         console.error(error);

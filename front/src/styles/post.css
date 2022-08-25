@@ -104,7 +104,7 @@
     margin: 0 10px 0 0;
 }
 
-.liked {
+.post-card__like-comment__like-icon.liked {
     filter: invert(88%) sepia(2%) saturate(3213%) hue-rotate(313deg)
         brightness(93%) contrast(124%);
 }

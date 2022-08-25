@@ -1,7 +1,22 @@
-//import likeLogoEmpty from '../assets/like-empty.svg';
-//import likeLogoFull from '../assets/like-full.svg';
+import { useState, useContext } from 'react';
+
+import { AuthContext } from '../utils/Context';
+
+import { LikeComment } from '../services/comment.service';
 
 export default function Comment(props) {
+    const { token, userId } = useContext(AuthContext);
+
+    const [like, setLike] = useState(
+        props.likeUserIds.includes(`${userId}`) ? 1 : 0
+    );
+
+    const { refreshComment } = props;
+
+    const toggleLike = () => {
+        setLike(like === 0 ? 1 : 0);
+    };
+
     function formatTime(timestamp) {
         if (timestamp === null) return null;
         //Extracts an array with [year, month, date]
@@ -12,6 +27,14 @@ export default function Comment(props) {
     }
     const creationTime = formatTime(props.creationTimestamp);
     const modificationTime = formatTime(props.modificationTimestamp);
+
+    async function handleLike(commentId) {
+        const response = await LikeComment(commentId, like, token);
+        if (response.status) {
+            toggleLike();
+            refreshComment(commentId, response.comment);
+        } //else setCustomMessage(response);
+    }
 
     return (
         <div className="comment-card">
@@ -31,14 +54,21 @@ export default function Comment(props) {
                 </p>
             )}
             <div className="comment-card__like">
-                <button className="comment-card__like__like-button">
-                    J'aime
-                    {/* <img
-                        className="comment-card__like__like-icon"
-                        src={likeLogoEmpty}
-                        alt="Liker"
-                    /> */}
-                </button>
+                {like === 0 ? (
+                    <button
+                        className="comment-card__like__like-button"
+                        onClick={() => handleLike(props.id)}
+                    >
+                        J'aime
+                    </button>
+                ) : (
+                    <button
+                        className="comment-card__like__like-button liked"
+                        onClick={() => handleLike(props.id)}
+                    >
+                        J'aime
+                    </button>
+                )}
                 <span>
                     {props.numberOfLikes > 0 ? props.numberOfLikes : null}
                 </span>

@@ -71,6 +71,15 @@ export default function Post(props) {
         setComments((comments) => [...comments, newComment]);
     }
 
+    async function refreshComment(commentId, newComment) {
+        setComments(
+            comments.map((comment) => {
+                if (comment._id !== commentId) return comment;
+                else return newComment;
+            })
+        );
+    }
+
     function showDeletePostDialog() {
         deletePostDialog.showModal();
     }
@@ -173,13 +182,16 @@ export default function Post(props) {
                     {comments.map((comment) => (
                         <Comment
                             key={comment._id}
+                            id={comment._id}
                             author={comment.userId}
                             text={comment.text}
                             numberOfLikes={comment.numberOfLikes}
+                            likeUserIds={comment.likeUserIds}
                             creationTimestamp={comment.creationTimestamp}
                             modificationTimestamp={
                                 comment.modificationTimestamp
                             }
+                            refreshComment={refreshComment}
                         />
                     ))}
                 </div>

@@ -43,11 +43,20 @@
 .comment-card__like__like-button {
     display: flex;
     align-items: center;
-    margin: 0 0 0 20px;
+    margin: 0 10px 0 20px;
     padding: 0;
     background-color: transparent;
     border: none;
     cursor: pointer;
+    font-size: 0.7em;
+    font-weight: bold;
+    color: var(--color-tertiary);
+}
+.comment-card__like__like-button.liked {
+    color: black;
+}
+
+.comment-card__like span {
     font-size: 0.7em;
     font-weight: bold;
 }
@@ -56,9 +65,4 @@
     height: 20px;
     width: 20px;
     margin: 0 10px 0 0;
-}
-
-.liked {
-    filter: invert(88%) sepia(2%) saturate(3213%) hue-rotate(313deg)
-        brightness(93%) contrast(124%);
 }

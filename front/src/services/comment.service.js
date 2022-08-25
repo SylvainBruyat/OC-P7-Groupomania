@@ -39,3 +39,35 @@ export async function GetAllComments(postId, token) {
         return error;
     }
 }
+
+export async function LikeComment(commentId, like, token) {
+    try {
+        const likeValueToPost = like === 0 ? 1 : 0;
+        const response = await fetch(
+            `http://localhost:3000/api/comment/${commentId}/like`,
+            {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ like: likeValueToPost }),
+            }
+        );
+        if (response.status === 201) {
+            const data = await response.json();
+            return { status: response.status, comment: data.comment };
+        } else if (response.status === 404)
+            return "Ce commentaire n'existe pas.";
+        else if (response.status === 409) {
+            const data = await response.json();
+            if (data.message === 'Comment already liked')
+                return 'Vous ne pouvez pas liker plusieurs fois un commentaire.';
+            return "Vous n'avez pas de like à supprimer sur ce commentaire.";
+        } else if (response.status === 500)
+            return 'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.';
+        else return 'Erreur inconnue';
+    } catch (error) {
+        return error;
+    }
+}

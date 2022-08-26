@@ -164,6 +164,7 @@ export default function Profile() {
                             <button
                                 value="cancel"
                                 className="deleteProfileDialog__button"
+                                autoFocus
                             >
                                 Annuler
                             </button>

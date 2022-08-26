@@ -1,10 +1,10 @@
 * {
     box-sizing: border-box;
+    font-family: 'Lato', sans-serif;
 }
 
 body {
     margin: 0;
-    font-family: 'Lato', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }

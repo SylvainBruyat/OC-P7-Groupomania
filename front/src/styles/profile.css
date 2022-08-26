@@ -30,7 +30,7 @@
 
 #deleteProfileDialog {
     border-radius: 15px;
-    border: 3px solid var(--color-tertiary);
+    border: 3px solid var(--color-primary);
 }
 
 #deleteProfileDialog p {

@@ -53,6 +53,7 @@ export default function CommentPublish(props) {
                         value={commentContent.commentText}
                         onChange={(evt) => handleCommentContentChange(evt)}
                         required
+                        autoFocus
                     ></textarea>
                     <div className="comment-edit__bottom-bar">
                         <button

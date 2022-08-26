@@ -60,6 +60,7 @@ export default function PostEdit(props) {
                         value={postContent.text}
                         onChange={(evt) => handlePostContentChange(evt)}
                         required
+                        autoFocus
                     ></textarea>
                     <div className="post-edit__bottom-bar">
                         <label htmlFor="post-image-upload">

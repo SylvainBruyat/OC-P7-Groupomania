@@ -58,6 +58,7 @@ export default function PostPublish(props) {
                         value={postContent.postText}
                         onChange={(evt) => handlePostContentChange(evt)}
                         required
+                        autoFocus
                     ></textarea>
                     <div className="post-edit__bottom-bar">
                         <label htmlFor="post-image-upload">

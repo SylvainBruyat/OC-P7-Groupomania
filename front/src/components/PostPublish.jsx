@@ -57,6 +57,7 @@ export default function PostPublish(props) {
                         placeholder="Ecrivez votre message ici"
                         value={postContent.postText}
                         onChange={(evt) => handlePostContentChange(evt)}
+                        maxLength={5000}
                         required
                         autoFocus
                     ></textarea>

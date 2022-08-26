@@ -5,7 +5,7 @@ let postDefinition = {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    text: {type: String, required: true},
+    text: {type: String, required: true, maxLength: 5000},
     imageUrl: {type: String, required: false},
     numberOfLikes: {type: Number, required: true},
     likeUserIds: {type: Array, required: true},

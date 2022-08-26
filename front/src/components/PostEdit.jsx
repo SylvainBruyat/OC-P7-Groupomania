@@ -59,6 +59,7 @@ export default function PostEdit(props) {
                         placeholder="Ecrivez votre message ici"
                         value={postContent.text}
                         onChange={(evt) => handlePostContentChange(evt)}
+                        maxLength={5000}
                         required
                         autoFocus
                     ></textarea>

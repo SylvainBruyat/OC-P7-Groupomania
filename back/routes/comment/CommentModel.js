@@ -6,7 +6,7 @@ let commentDefinition = {
         ref: 'User'
       },
     postId: {type: String, required: true},
-    text: {type: String, required: true},
+    text: {type: String, required: true, maxLength: 5000},
     numberOfLikes: {type: Number, required: true},
     likeUserIds: {type: Array, required: true},
     creationTimestamp: {type: Date, required: true},

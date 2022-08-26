@@ -52,6 +52,7 @@ export default function CommentPublish(props) {
                         placeholder="Ecrivez votre commentaire ici"
                         value={commentContent.commentText}
                         onChange={(evt) => handleCommentContentChange(evt)}
+                        maxLength={5000}
                         required
                         autoFocus
                     ></textarea>

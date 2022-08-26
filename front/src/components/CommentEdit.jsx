@@ -61,6 +61,7 @@ export default function CommentEdit(props) {
                         placeholder="Ecrivez votre message ici"
                         value={commentContent.text}
                         onChange={(evt) => handleCommentContentChange(evt)}
+                        maxLength={5000}
                         required
                         autoFocus
                     ></textarea>

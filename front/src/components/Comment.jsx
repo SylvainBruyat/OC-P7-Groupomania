@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react';
 
 import { AuthContext } from '../utils/Context';
+import CommentEdit from './CommentEdit';
 
 import { LikeComment } from '../services/comment.service';
 
@@ -11,10 +12,21 @@ export default function Comment(props) {
         props.likeUserIds.includes(`${userId}`) ? 1 : 0
     );
 
-    const { refreshComment } = props;
+    const [isCommentMenuVisible, setIsCommentMenuVisible] = useState(false);
+    const [commentEditMode, setCommentEditMode] = useState(false);
+
+    const { refreshComment, handleDeleteComment } = props;
+
+    const deleteCommentDialog = document.getElementById(
+        `deleteCommentDialog-${props.id}`
+    );
 
     const toggleLike = () => {
         setLike(like === 0 ? 1 : 0);
+    };
+
+    const toggleCommentEditMode = () => {
+        setCommentEditMode(!commentEditMode);
     };
 
     function formatTime(timestamp) {
@@ -36,43 +48,115 @@ export default function Comment(props) {
         } //else setCustomMessage(response);
     }
 
+    function showCommentMenu() {
+        setIsCommentMenuVisible(!isCommentMenuVisible);
+    }
+
+    function showDeleteCommentDialog() {
+        deleteCommentDialog.showModal();
+    }
+
     return (
         <div className="comment-card">
-            <div className="comment-card__name-text">
-                <a
-                    href={`/profile/${props.author._id}`}
-                    className="comment-card__name-text__name"
-                >
-                    {`${props.author.firstName} ${props.author.lastName}`}
-                </a>
-                <p>{props.text}</p>
-            </div>
-            <p className="comment-card__create-time">Posté le {creationTime}</p>
-            {props.modificationTimestamp === null ? null : (
-                <p className="comment-card__modify-time">
-                    Modifié le {modificationTime}
+            <div className="comment-card__content">
+                <div className="comment-card__name-text">
+                    <a
+                        href={`/profile/${props.author._id}`}
+                        className="comment-card__name-text__name"
+                    >
+                        {`${props.author.firstName} ${props.author.lastName}`}
+                    </a>
+                    <p>{props.text}</p>
+                </div>
+                <p className="comment-card__create-time">
+                    Posté le {creationTime}
                 </p>
-            )}
-            <div className="comment-card__like">
-                {like === 0 ? (
-                    <button
-                        className="comment-card__like__like-button"
-                        onClick={() => handleLike(props.id)}
-                    >
-                        J'aime
-                    </button>
-                ) : (
-                    <button
-                        className="comment-card__like__like-button liked"
-                        onClick={() => handleLike(props.id)}
-                    >
-                        J'aime
-                    </button>
+                {props.modificationTimestamp === null ? null : (
+                    <p className="comment-card__modify-time">
+                        Modifié le {modificationTime}
+                    </p>
                 )}
-                <span>
-                    {props.numberOfLikes > 0 ? props.numberOfLikes : null}
-                </span>
+                <div className="comment-card__like">
+                    {like === 0 ? (
+                        <button
+                            className="comment-card__like__like-button"
+                            onClick={() => handleLike(props.id)}
+                        >
+                            J'aime
+                        </button>
+                    ) : (
+                        <button
+                            className="comment-card__like__like-button liked"
+                            onClick={() => handleLike(props.id)}
+                        >
+                            J'aime
+                        </button>
+                    )}
+                    <span>
+                        {props.numberOfLikes > 0 ? props.numberOfLikes : null}
+                    </span>
+                </div>
             </div>
+            <div
+                className="comment-card__actions"
+                onClick={() => showCommentMenu()}
+            >
+                <p className="comment-card__menu_opener">...</p>
+                {isCommentMenuVisible && (
+                    <div className="comment-card__actions-menu">
+                        <button
+                            className="comment-card__modify-button"
+                            title="Modifier ce commentaire"
+                            onClick={toggleCommentEditMode}
+                        >
+                            Modifier
+                        </button>
+                        <button
+                            className="comment-card__delete-button"
+                            title="Supprimer ce commentaire"
+                            onClick={() => showDeleteCommentDialog()}
+                        >
+                            Supprimer
+                        </button>
+                    </div>
+                )}
+                {commentEditMode ? (
+                    <CommentEdit
+                        id={props.id}
+                        userId={props.userId}
+                        text={props.text}
+                        toggleCommentEditMode={toggleCommentEditMode}
+                        refreshComment={refreshComment}
+                    />
+                ) : (
+                    <></>
+                )}
+            </div>
+            <dialog
+                className="deleteCommentDialog"
+                id={`deleteCommentDialog-${props.id}`}
+            >
+                <form method="dialog">
+                    <p>Souhaitez-vous réellement supprimer ce commentaire ?</p>
+                    <div className="deleteCommentDialog__button-div">
+                        <button
+                            value="cancel"
+                            className="deleteCommentDialog__button"
+                            autoFocus
+                        >
+                            Annuler
+                        </button>
+                        <button
+                            value="confirm"
+                            className="deleteCommentDialog__button"
+                            onClick={() => handleDeleteComment(props.id)}
+                            data-commentid={props.id}
+                        >
+                            Confirmer
+                        </button>
+                    </div>
+                </form>
+            </dialog>
         </div>
     );
 }

@@ -58,12 +58,13 @@ exports.modifyComment = async (req, res, next) => {
             modificationTimestamp: Date.now()
         };
 
-        //Empêche de modifier les likes sur ce endpoint
+        //Empêche de modifier les likes sur ce endpoint. Plus nécessaire après validation des entrées utilisateur
         delete commentObject.numberOfLikes;
         delete commentObject.likeUserIds;
 
         await Comment.updateOne({_id: req.params.id}, {...commentObject, _id: req.params.id});
-        res.status(200).json({message: "Comment successfully modified"});
+        comment = await Comment.findOne({_id: req.params.id}).populate('userId', 'firstName lastName');
+        res.status(200).json({message: "Comment successfully modified", comment});
     }
     catch (error) {
         console.error(error);
@@ -124,7 +125,7 @@ exports.likeComment = async (req, res, next) => {
                 return res.status(400).json({message: "Invalid request"});
         }
         comment = await Comment.findOne({_id: req.params.id});
-        await comment.populate('userId', 'firstName lastName')
+        await comment.populate('userId', 'firstName lastName');
         return res.status(201).json({message: "Like taken into acount", comment});
     }
     catch (error) {

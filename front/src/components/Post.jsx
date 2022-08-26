@@ -5,7 +5,7 @@ import Comment from './Comment';
 import PostEdit from './PostEdit';
 import CommentPublish from './CommentPublish';
 import { LikePost } from '../services/post.service';
-import { GetAllComments } from '../services/comment.service';
+import { GetAllComments, DeleteComment } from '../services/comment.service';
 
 import likeLogoEmpty from '../assets/icons/like-empty.svg';
 import likeLogoFull from '../assets/icons/like-full.svg';
@@ -14,7 +14,7 @@ import editLogo from '../assets/icons/edit.svg';
 import deleteLogo from '../assets/icons/delete-button.svg';
 
 export default function Post(props) {
-    const { handleDelete, refreshPost } = props;
+    const { handleDeletePost, refreshPost } = props;
     const [comments, setComments] = useState([]);
     const [customMessage, setCustomMessage] = useState('');
     const { token, userId } = useContext(AuthContext);
@@ -37,7 +37,9 @@ export default function Post(props) {
         setLike(like === 0 ? 1 : 0);
     };
 
-    const deletePostDialog = document.getElementById('deletePostDialog');
+    const deletePostDialog = document.getElementById(
+        `deletePostDialog-${props.id}`
+    );
 
     useEffect(() => {
         async function FetchComments() {
@@ -82,6 +84,15 @@ export default function Post(props) {
 
     function showDeletePostDialog() {
         deletePostDialog.showModal();
+    }
+
+    async function handleDeleteComment(commentId) {
+        const response = await DeleteComment(commentId, token);
+        if (response.status) {
+            setComments(
+                comments.filter((comment) => comment._id !== commentId)
+            );
+        } else setCustomMessage(response);
     }
 
     return (
@@ -192,24 +203,29 @@ export default function Post(props) {
                                 comment.modificationTimestamp
                             }
                             refreshComment={refreshComment}
+                            handleDeleteComment={handleDeleteComment}
                         />
                     ))}
                 </div>
             </div>
-            <dialog id="deletePostDialog">
+            <dialog
+                className="deletePostDialog"
+                id={`deletePostDialog-${props.id}`}
+            >
                 <form method="dialog">
                     <p>Souhaitez-vous réellement supprimer ce message ?</p>
                     <div className="deletePostDialog__button-div">
                         <button
                             value="cancel"
                             className="deletePostDialog__button"
+                            autoFocus
                         >
                             Annuler
                         </button>
                         <button
                             value="confirm"
                             className="deletePostDialog__button"
-                            onClick={() => handleDelete(props.id)}
+                            onClick={() => handleDeletePost(props.id)}
                         >
                             Confirmer
                         </button>

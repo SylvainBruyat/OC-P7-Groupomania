@@ -40,6 +40,57 @@ export async function GetAllComments(postId, token) {
     }
 }
 
+export async function ModifyComment(commentId, commentContent, token) {
+    try {
+        const response = await fetch(
+            `http://localhost:3000/api/comment/${commentId}`,
+            {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(commentContent),
+            }
+        );
+
+        if (response.status === 200) {
+            const newComment = await response.json();
+            return { status: response.status, newComment };
+        } else if (response.status === 403)
+            return "Vous n'avez pas les droits pour effectuer cette action.";
+        else if (response.status === 404) return "Ce commentaire n'existe pas.";
+        else if (response.status === 500)
+            return 'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.';
+        else return 'Erreur inconnue';
+    } catch (error) {
+        return error;
+    }
+}
+
+export async function DeleteComment(commentId, token) {
+    try {
+        const response = await fetch(
+            `http://localhost:3000/api/comment/${commentId}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        if (response.status === 200) return { status: response.status };
+        else if (response.status === 403)
+            return "Vous n'avez pas les droits pour effectuer cette action.";
+        else if (response.status === 404) return "Ce commentaire n'existe pas.";
+        else if (response.status === 500)
+            return 'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.';
+        else return 'Erreur inconnue';
+    } catch (error) {
+        return error;
+    }
+}
+
 export async function LikeComment(commentId, like, token) {
     try {
         const likeValueToPost = like === 0 ? 1 : 0;

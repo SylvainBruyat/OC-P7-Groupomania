@@ -1,9 +1,12 @@
 .comment-card {
     display: flex;
-    flex-direction: column;
     width: 100%;
     max-width: 500px;
     margin-bottom: 10px;
+}
+
+.comment-card__content {
+    flex-grow: 1;
 }
 
 .comment-card__name-text {
@@ -65,4 +68,95 @@
     height: 20px;
     width: 20px;
     margin: 0 10px 0 0;
+}
+
+.comment-card__actions {
+    position: relative;
+}
+
+.comment-card__menu_opener {
+    height: 20px;
+    width: 20px;
+    margin: 5px 10px 0 10px;
+    display: flex;
+    justify-content: center;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.comment-card__menu_opener:hover {
+    background-color: var(--color-secondary);
+}
+
+.comment-card__actions-menu {
+    position: absolute;
+    left: 10px;
+    z-index: 10;
+    padding: 5px 0;
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid var(--color-tertiary);
+}
+
+.comment-card__modify-button,
+.comment-card__delete-button {
+    margin: 5px 10px;
+    padding: 0;
+    display: inline;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.comment-card__modify-button:hover,
+.comment-card__delete-button:hover {
+    color: var(--color-primary);
+}
+
+.deleteCommentDialog {
+    position: fixed;
+    border-radius: 15px;
+    border: 3px solid var(--color-tertiary);
+}
+
+.deleteCommentDialog p {
+    margin-top: 0px;
+}
+
+.deleteCommentDialog__button-div {
+    display: flex;
+    justify-content: space-around;
+}
+
+.deleteCommentDialog__button {
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: var(--color-secondary);
+    cursor: pointer;
+}
+
+.deleteCommentDialog__button:hover {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.delete-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    width: 30px;
+    margin-left: 5px;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.delete-button-container:hover {
+    background-color: var(--color-secondary);
+}
+
+.delete-button {
+    height: 20px;
+    width: 20px;
 }

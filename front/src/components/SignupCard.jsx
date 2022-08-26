@@ -49,6 +49,7 @@ export default function SignupCard(props) {
                     id="email"
                     placeholder="Entrez votre adresse e-mail"
                     value={userSignupInfo.email}
+                    maxLength={200}
                     required
                     onChange={(evt) => handleChange(evt)}
                 />
@@ -62,6 +63,7 @@ export default function SignupCard(props) {
                     placeholder="Créez un mot de passe"
                     value={userSignupInfo.password}
                     minLength={8}
+                    maxLength={200}
                     required
                     onChange={(evt) => handleChange(evt)}
                 />
@@ -79,6 +81,7 @@ export default function SignupCard(props) {
                     id="firstName"
                     placeholder="Votre prénom"
                     value={userSignupInfo.firstName}
+                    maxLength={50}
                     required
                     onChange={(evt) => handleChange(evt)}
                 />
@@ -91,6 +94,7 @@ export default function SignupCard(props) {
                     id="lastName"
                     placeholder="Votre nom"
                     value={userSignupInfo.lastName}
+                    maxLength={50}
                     required
                     onChange={(evt) => handleChange(evt)}
                 />

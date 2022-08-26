@@ -45,6 +45,7 @@ export default function LoginCard() {
                     id="email"
                     placeholder="Entrez votre adresse e-mail"
                     value={userLoginInfo.email}
+                    maxLength={200}
                     required
                     onChange={(evt) => handleChange(evt)}
                 />
@@ -57,6 +58,7 @@ export default function LoginCard() {
                     id="password"
                     placeholder="Entrez votre mot de passe"
                     value={userLoginInfo.password}
+                    maxLength={200}
                     required
                     onChange={(evt) => handleChange(evt)}
                 />

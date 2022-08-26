@@ -29,7 +29,8 @@ export async function CreatePost(postContent, token) {
         if (response.status === 201) {
             const data = await response.json();
             return { status: response.status, newPost: data.post };
-        } else if (response.status === 500)
+        } else if (response.status === 401) return { status: response.status };
+        else if (response.status === 500)
             return 'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.';
         else return 'Erreur inconnue';
     } catch (error) {
@@ -48,7 +49,8 @@ export async function GetFivePosts(pageNumber, token) {
         if (response.status === 200) {
             const newPosts = await response.json();
             return { status: response.status, newPosts };
-        } else if (response.status === 500)
+        } else if (response.status === 401) return { status: response.status };
+        else if (response.status === 500)
             return 'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.';
         else return 'Erreur inconnue';
     } catch (error) {
@@ -67,7 +69,8 @@ export async function GetFivePostsFromUser(userId, pageNumber, token) {
         if (response.status === 200) {
             const newPosts = await response.json();
             return { status: response.status, newPosts };
-        } else if (response.status === 403)
+        } else if (response.status === 401) return { status: response.status };
+        else if (response.status === 403)
             return "Vous n'avez pas les droits pour accéder à cette ressource.";
         else if (response.status === 404)
             return "Cet utilisateur n'existe pas.";
@@ -90,7 +93,8 @@ export async function GetOnePost(postId, token) {
         if (response.status === 200) {
             const newPost = await response.json();
             return { status: response.status, newPost };
-        } else if (response.status === 404) return "Ce message n'existe pas.";
+        } else if (response.status === 401) return { status: response.status };
+        else if (response.status === 404) return "Ce message n'existe pas.";
         else if (response.status === 500)
             return 'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.';
         else return 'Erreur inconnue';
@@ -131,6 +135,7 @@ export async function ModifyPost(postId, postContent, token) {
         );
 
         if (response.status === 200) return { status: response.status };
+        else if (response.status === 401) return { status: response.status };
         else if (response.status === 403)
             return "Vous n'avez pas les droits pour effectuer cette action.";
         else if (response.status === 404) return "Ce message n'existe pas.";
@@ -154,6 +159,7 @@ export async function DeletePost(postId, token) {
             }
         );
         if (response.status === 200) return { status: response.status };
+        else if (response.status === 401) return { status: response.status };
         else if (response.status === 403)
             return "Vous n'avez pas les droits pour effectuer cette action.";
         else if (response.status === 404) return "Ce message n'existe pas.";
@@ -181,7 +187,8 @@ export async function LikePost(postId, like, token) {
         );
         if (response.status === 201) {
             return { status: response.status };
-        } else if (response.status === 404) return "Ce message n'existe pas.";
+        } else if (response.status === 401) return { status: response.status };
+        else if (response.status === 404) return "Ce message n'existe pas.";
         else if (response.status === 409) {
             const data = await response.json();
             if (data.message === 'Post already liked')

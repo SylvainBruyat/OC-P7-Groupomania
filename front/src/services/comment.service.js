@@ -12,7 +12,8 @@ export async function CreateComment(commentContent, postId, token) {
         if (response.status === 201) {
             const data = await response.json();
             return { status: response.status, newComment: data.comment };
-        } else if (response.status === 500)
+        } else if (response.status === 401) return { status: response.status };
+        else if (response.status === 500)
             return 'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.';
         else return 'Erreur inconnue';
     } catch (error) {
@@ -31,7 +32,8 @@ export async function GetAllComments(postId, token) {
         if (response.status === 200) {
             const comments = await response.json();
             return { status: response.status, comments };
-        } else if (response.status === 404) return "Ce message n'existe pas.";
+        } else if (response.status === 401) return { status: response.status };
+        else if (response.status === 404) return "Ce message n'existe pas.";
         else if (response.status === 500)
             return 'Une erreur est survenue côté serveur. Veuillez réessayer ultérieurement.';
         else return 'Erreur inconnue';
@@ -57,7 +59,8 @@ export async function ModifyComment(commentId, commentContent, token) {
         if (response.status === 200) {
             const newComment = await response.json();
             return { status: response.status, newComment };
-        } else if (response.status === 403)
+        } else if (response.status === 401) return { status: response.status };
+        else if (response.status === 403)
             return "Vous n'avez pas les droits pour effectuer cette action.";
         else if (response.status === 404) return "Ce commentaire n'existe pas.";
         else if (response.status === 500)
@@ -80,6 +83,7 @@ export async function DeleteComment(commentId, token) {
             }
         );
         if (response.status === 200) return { status: response.status };
+        else if (response.status === 401) return { status: response.status };
         else if (response.status === 403)
             return "Vous n'avez pas les droits pour effectuer cette action.";
         else if (response.status === 404) return "Ce commentaire n'existe pas.";
@@ -108,8 +112,8 @@ export async function LikeComment(commentId, like, token) {
         if (response.status === 201) {
             const data = await response.json();
             return { status: response.status, comment: data.comment };
-        } else if (response.status === 404)
-            return "Ce commentaire n'existe pas.";
+        } else if (response.status === 401) return { status: response.status };
+        else if (response.status === 404) return "Ce commentaire n'existe pas.";
         else if (response.status === 409) {
             const data = await response.json();
             if (data.message === 'Comment already liked')

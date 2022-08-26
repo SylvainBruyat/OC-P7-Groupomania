@@ -61,7 +61,8 @@ export async function GetProfile(userId, token) {
         if (response.status === 200) {
             const profileData = await response.json();
             return { status: response.status, profileData };
-        } else if (response.status === 403)
+        } else if (response.status === 401) return { status: response.status };
+        else if (response.status === 403)
             return "Vous n'avez pas les droits pour accéder à cette ressource.";
         else if (response.status === 404) return "Ce profil n'existe pas.";
         else if (response.status === 500)
@@ -90,7 +91,8 @@ export async function ModifyProfile(userId, formData, token) {
                 status: response.status,
                 profilePictureUrl: data.profilePictureUrl,
             };
-        } else if (response.status === 403)
+        } else if (response.status === 401) return { status: response.status };
+        else if (response.status === 403)
             return "Vous n'avez pas les droits pour effectuer cette action.";
         else if (response.status === 404) return "Ce profil n'existe pas.";
         else if (response.status === 500)
@@ -114,6 +116,7 @@ export async function DeleteProfile(userId, token) {
         );
 
         if (response.status === 200) return { status: response.status };
+        else if (response.status === 401) return { status: response.status };
         else if (response.status === 403)
             return "Vous n'avez pas les droits pour effectuer cette action.";
         else if (response.status === 404)

@@ -1,4 +1,5 @@
 import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { PostPublishContext, AuthContext } from '../utils/Context';
 import { CreatePost } from '../services/post.service';
@@ -11,6 +12,9 @@ export default function PostPublish(props) {
 
     const { togglePostPublishMode } = useContext(PostPublishContext);
     const { token } = useContext(AuthContext);
+
+    const navigate = useNavigate();
+
     const { insertPost } = props;
 
     function handlePostContentChange(evt) {
@@ -29,9 +33,12 @@ export default function PostPublish(props) {
     async function PublishPost() {
         const response = await CreatePost(postContent, token);
         if (response.status) {
-            insertPost(response.newPost);
-            setPostContent({ text: '', image: null });
-            togglePostPublishMode();
+            if (response.status === 401) navigate('/');
+            else {
+                insertPost(response.newPost);
+                setPostContent({ text: '', image: null });
+                togglePostPublishMode();
+            }
         } else throw new Error(response);
     }
 

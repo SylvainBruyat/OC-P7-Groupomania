@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { AuthContext, PostPublishContext } from '../utils/Context';
 import Post from '../components/Post';
@@ -13,6 +14,8 @@ export default function Home() {
         useContext(PostPublishContext);
     const { token } = useContext(AuthContext);
 
+    const navigate = useNavigate();
+
     let pageNumber = 1;
 
     useEffect(() => {
@@ -24,17 +27,19 @@ export default function Home() {
             ) {
                 pageNumber++;
                 const response = await GetFivePosts(pageNumber, token);
-                if (response.status)
-                    setPosts((posts) => [...posts, ...response.newPosts]);
-                else setCustomMessage(response);
+                if (response.status) {
+                    if (response.status === 401) navigate('/');
+                    else setPosts((posts) => [...posts, ...response.newPosts]);
+                } else setCustomMessage(response);
             }
         };
 
         async function FetchFivePosts() {
             const response = await GetFivePosts(pageNumber, token);
-            if (response.status)
-                setPosts((posts) => [...posts, ...response.newPosts]);
-            else setCustomMessage(response);
+            if (response.status) {
+                if (response.status === 401) navigate('/');
+                else setPosts((posts) => [...posts, ...response.newPosts]);
+            } else setCustomMessage(response);
         }
         FetchFivePosts();
     }, [pageNumber, token]);

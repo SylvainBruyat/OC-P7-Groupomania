@@ -1,4 +1,5 @@
 import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { AuthContext } from '../utils/Context';
 import { ModifyComment } from '../services/comment.service';
@@ -12,6 +13,9 @@ export default function CommentEdit(props) {
     });
 
     const { token } = useContext(AuthContext);
+
+    const navigate = useNavigate();
+
     const { toggleCommentEditMode, refreshComment } = props;
 
     function handleCommentContentChange(evt) {
@@ -33,9 +37,12 @@ export default function CommentEdit(props) {
     async function EditComment() {
         const response = await ModifyComment(props.id, commentContent, token);
         if (response.status) {
-            setCommentContent({ text: '', image: null });
-            toggleCommentEditMode();
-            refreshComment(props.id, response.newComment.comment);
+            if (response.status === 401) navigate('/');
+            else {
+                setCommentContent({ text: '', image: null });
+                toggleCommentEditMode();
+                refreshComment(props.id, response.newComment.comment);
+            }
         } else throw new Error(response);
     }
 

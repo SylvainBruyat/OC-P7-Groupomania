@@ -1,4 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { AuthContext } from '../utils/Context';
 import Comment from './Comment';
@@ -25,6 +26,8 @@ export default function Post(props) {
     const [postEditMode, setPostEditMode] = useState(false);
     const [commentPublishMode, setcommentPublishMode] = useState(false);
 
+    const navigate = useNavigate();
+
     const togglePostEditMode = () => {
         setPostEditMode(!postEditMode);
     };
@@ -44,8 +47,10 @@ export default function Post(props) {
     useEffect(() => {
         async function FetchComments() {
             const response = await GetAllComments(props.id, token);
-            if (response.status) setComments(response.comments);
-            else setCustomMessage(response);
+            if (response.status) {
+                if (response.status === 401) navigate('/');
+                else setComments(response.comments);
+            } else setCustomMessage(response);
         }
         FetchComments();
     }, [props.id, token]);
@@ -64,8 +69,11 @@ export default function Post(props) {
     async function handleLike(postId) {
         const response = await LikePost(postId, like, token);
         if (response.status) {
-            toggleLike();
-            refreshPost(postId);
+            if (response.status === 401) navigate('/');
+            else {
+                toggleLike();
+                refreshPost(postId);
+            }
         } else setCustomMessage(response);
     }
 
@@ -89,9 +97,11 @@ export default function Post(props) {
     async function handleDeleteComment(commentId) {
         const response = await DeleteComment(commentId, token);
         if (response.status) {
-            setComments(
-                comments.filter((comment) => comment._id !== commentId)
-            );
+            if (response.status === 401) navigate('/');
+            else
+                setComments(
+                    comments.filter((comment) => comment._id !== commentId)
+                );
         } else setCustomMessage(response);
     }
 

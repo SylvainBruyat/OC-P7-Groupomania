@@ -1,4 +1,5 @@
 import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { AuthContext } from '../utils/Context';
 import { ModifyPost } from '../services/post.service';
@@ -11,6 +12,8 @@ export default function PostEdit(props) {
         text: props.text,
         image: null,
     });
+
+    const navigate = useNavigate();
 
     const { token } = useContext(AuthContext);
     const { togglePostEditMode, refreshPost } = props;
@@ -31,9 +34,12 @@ export default function PostEdit(props) {
     async function EditPost() {
         const response = await ModifyPost(props.id, postContent, token);
         if (response.status) {
-            setPostContent({ text: '', image: null });
-            togglePostEditMode();
-            refreshPost(props.id);
+            if (response.status === 401) navigate('/');
+            else {
+                setPostContent({ text: '', image: null });
+                togglePostEditMode();
+                refreshPost(props.id);
+            }
         } else throw new Error(response);
     }
 

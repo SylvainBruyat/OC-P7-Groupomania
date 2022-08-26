@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 import { AuthContext, PostPublishContext } from '../utils/Context';
 import Post from '../components/Post';
@@ -25,6 +25,8 @@ export default function Profile() {
     const [file, setFile] = useState();
     const [profilePicture, setProfilePicture] = useState('');
 
+    const navigate = useNavigate();
+
     const params = useParams();
     const { postPublishMode, togglePostPublishMode } =
         useContext(PostPublishContext);
@@ -43,8 +45,10 @@ export default function Profile() {
         formData.append('image', file);
 
         const response = await ModifyProfile(params.id, formData, token);
-        if (response.status) setProfilePicture(response.profilePictureUrl);
-        else setCustomMessage(response);
+        if (response.status) {
+            if (response.status === 401) navigate('/');
+            else setProfilePicture(response.profilePictureUrl);
+        } else setCustomMessage(response);
     }
 
     function showDeletePostDialog() {
@@ -53,14 +57,17 @@ export default function Profile() {
 
     async function handleDeleteProfile(userId) {
         const response = await DeleteProfile(userId, token);
-        if (response.status) handleLogout();
-        else setCustomMessage(response);
+        if (response.status) {
+            if (response.status === 401) navigate('/');
+            else handleLogout();
+        } else setCustomMessage(response);
     }
 
     async function handleDeletePost(postId) {
         const response = await DeletePost(postId, token);
         if (response.status) {
-            setPosts(posts.filter((post) => post._id !== postId));
+            if (response.status === 401) navigate('/');
+            else setPosts(posts.filter((post) => post._id !== postId));
         } else setCustomMessage(response);
     }
 
@@ -91,9 +98,10 @@ export default function Profile() {
                     pageNumber,
                     token
                 );
-                if (response.status)
-                    setPosts((posts) => [...posts, ...response.newPosts]);
-                else setCustomMessage(response);
+                if (response.status) {
+                    if (response.status === 401) navigate('/');
+                    else setPosts((posts) => [...posts, ...response.newPosts]);
+                } else setCustomMessage(response);
             }
         };
 
@@ -101,20 +109,25 @@ export default function Profile() {
             try {
                 const response = await GetProfile(params.id, token);
                 if (response.status) {
-                    name = `${response.profileData.firstName} ${response.profileData.lastName}`;
-                    setProfilePicture(response.profileData.profilePictureUrl);
+                    if (response.status === 401) navigate('/');
+                    else {
+                        name = `${response.profileData.firstName} ${response.profileData.lastName}`;
+                        setProfilePicture(
+                            response.profileData.profilePictureUrl
+                        );
 
-                    const postsResponse = await GetFivePostsFromUser(
-                        params.id,
-                        pageNumber,
-                        token
-                    );
-                    if (postsResponse.status) {
-                        setPosts((posts) => [
-                            ...posts,
-                            ...postsResponse.newPosts,
-                        ]);
-                    } else setCustomMessage(postsResponse);
+                        const postsResponse = await GetFivePostsFromUser(
+                            params.id,
+                            pageNumber,
+                            token
+                        );
+                        if (postsResponse.status) {
+                            setPosts((posts) => [
+                                ...posts,
+                                ...postsResponse.newPosts,
+                            ]);
+                        } else setCustomMessage(postsResponse);
+                    }
                 } else setCustomMessage(response);
             } catch (error) {
                 setCustomMessage(`${error.message}`);

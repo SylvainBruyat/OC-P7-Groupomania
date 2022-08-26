@@ -1,4 +1,5 @@
 import { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { AuthContext } from '../utils/Context';
 import CommentEdit from './CommentEdit';
@@ -14,6 +15,8 @@ export default function Comment(props) {
 
     const [isCommentMenuVisible, setIsCommentMenuVisible] = useState(false);
     const [commentEditMode, setCommentEditMode] = useState(false);
+
+    const navigate = useNavigate();
 
     const { refreshComment, handleDeleteComment } = props;
 
@@ -43,9 +46,12 @@ export default function Comment(props) {
     async function handleLike(commentId) {
         const response = await LikeComment(commentId, like, token);
         if (response.status) {
-            toggleLike();
-            refreshComment(commentId, response.comment);
-        } //else setCustomMessage(response);
+            if (response.status === 401) navigate('/');
+            else {
+                toggleLike();
+                refreshComment(commentId, response.comment);
+            }
+        }
     }
 
     function showCommentMenu() {

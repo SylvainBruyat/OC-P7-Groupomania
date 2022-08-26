@@ -1,4 +1,5 @@
 import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { AuthContext } from '../utils/Context';
 import { CreateComment } from '../services/comment.service';
@@ -7,6 +8,8 @@ import closeButton from '../assets/icons/close-button.svg';
 
 export default function CommentPublish(props) {
     const [commentContent, setCommentContent] = useState('');
+
+    const navigate = useNavigate();
 
     const { token } = useContext(AuthContext);
     const { insertComment, toggleCommentPublishMode } = props;
@@ -24,9 +27,12 @@ export default function CommentPublish(props) {
     async function PublishComment() {
         const response = await CreateComment(commentContent, postId, token);
         if (response.status) {
-            insertComment(response.newComment);
-            setCommentContent('');
-            toggleCommentPublishMode();
+            if (response.status === 401) navigate('/');
+            else {
+                insertComment(response.newComment);
+                setCommentContent('');
+                toggleCommentPublishMode();
+            }
         } else throw new Error(response);
     }
 

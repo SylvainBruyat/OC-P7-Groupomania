@@ -16,7 +16,7 @@ header a {
     display: flex;
 }
 
-header img {
+.header-logo {
     width: 200px;
 }
 
@@ -39,6 +39,28 @@ header img {
 
 .active-link:visited {
     color: var(--color-tertiary);
+}
+
+.post-writing__button {
+    display: inline-flex;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.post-writing__icon {
+    width: 25px;
+    filter: var(--color-tertiary-svg);
+}
+
+.post-writing__button p {
+    margin: 0;
+}
+
+.post-writing__button input {
+    border-radius: 15px;
+    border: 1px solid var(--color-tertiary);
 }
 
 .logout-button {

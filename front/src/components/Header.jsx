@@ -1,17 +1,23 @@
 import { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 
-import { AuthContext } from '../utils/Context';
+import { AuthContext, PostPublishContext } from '../utils/Context';
 
 import redLogo from '../assets/icon-left-font-resized.png';
+import postWriteIcon from '../assets/icons/post-writing-icon.svg';
 
 export default function Header() {
     const { handleLogout, userId } = useContext(AuthContext);
+    const { togglePostPublishMode } = useContext(PostPublishContext);
 
     return (
         <header>
             <NavLink to="/home">
-                <img src={redLogo} alt="Retour à l'accueil" />
+                <img
+                    className="header-logo"
+                    src={redLogo}
+                    alt="Retour à l'accueil"
+                />
             </NavLink>
             <ul className="header-links">
                 <li>
@@ -35,6 +41,19 @@ export default function Header() {
                     </NavLink>
                 </li>
             </ul>
+            <button
+                className="post-writing__button"
+                onClick={togglePostPublishMode}
+            >
+                <p>
+                    <img
+                        className="post-writing__icon"
+                        src={postWriteIcon}
+                        alt="Cliquez ici pour écrire un message"
+                    />
+                </p>
+                <input placeholder="Ecrivez quelque chose"></input>
+            </button>
             <button className="logout-button" onClick={() => handleLogout()}>
                 Déconnexion
             </button>

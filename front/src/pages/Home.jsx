@@ -10,8 +10,7 @@ export default function Home() {
     const [posts, setPosts] = useState([]);
     const [customMessage, setCustomMessage] = useState('');
 
-    const { postPublishMode, togglePostPublishMode } =
-        useContext(PostPublishContext);
+    const { postPublishMode } = useContext(PostPublishContext);
     const { token } = useContext(AuthContext);
 
     const navigate = useNavigate();
@@ -70,10 +69,6 @@ export default function Home() {
     return (
         <div className="home-wrapper">
             <h1>Groupomania - Fil d'actualité</h1>
-            {/* TODO Supprimer ce bouton et le PostPublish une fois que celui dans le header est fonctionnel */}
-            <button onClick={togglePostPublishMode}>
-                Cliquez ici pour rédiger un post
-            </button>
             {postPublishMode ? <PostPublish insertPost={insertPost} /> : <></>}
             {posts.map((post) => (
                 <Post

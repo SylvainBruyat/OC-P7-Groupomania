@@ -14,8 +14,8 @@ export default function App() {
     return (
         <>
             <AuthProvider>
-                <Header />
                 <PostPublishProvider>
+                    <Header />
                     <Routes>
                         <Route path="/" element={<SignupLogin />} />
                         <Route

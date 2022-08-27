@@ -28,8 +28,7 @@ export default function Profile() {
     const navigate = useNavigate();
 
     const params = useParams();
-    const { postPublishMode, togglePostPublishMode } =
-        useContext(PostPublishContext);
+    const { postPublishMode } = useContext(PostPublishContext);
     const { token, handleLogout } = useContext(AuthContext);
 
     const deleteProfileDialog = document.getElementById('deleteProfileDialog');
@@ -85,6 +84,7 @@ export default function Profile() {
         );
     }
 
+    //TODO Séparer le useEffect en 2 ?
     useEffect(() => {
         window.onscroll = async function () {
             if (
@@ -139,9 +139,6 @@ export default function Profile() {
 
     return (
         <>
-            <button onClick={togglePostPublishMode}>
-                Cliquez ici pour rédiger un post
-            </button>
             {postPublishMode ? <PostPublish insertPost={insertPost} /> : <></>}
             <section className="profile-wrapper">
                 {/* A refactoriser dans un composant */}

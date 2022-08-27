@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext, PostPublishContext } from '../utils/Context';
 import Post from '../components/Post';
 import PostPublish from '../components/PostPublish';
-import { GetFivePosts } from '../services/post.service';
+import { GetFivePosts, GetOnePost, DeletePost } from '../services/post.service';
 
 export default function Home() {
     const [posts, setPosts] = useState([]);
@@ -18,6 +18,29 @@ export default function Home() {
 
     let pageNumber = 1;
 
+    async function insertPost(newPost) {
+        setPosts((posts) => [newPost, ...posts]);
+    }
+
+    async function refreshPost(postId) {
+        const response = await GetOnePost(postId, token);
+        setPosts(
+            posts.map((post) => {
+                if (post._id !== postId) return post;
+                else return response.newPost;
+            })
+        );
+    }
+
+    async function handleDeletePost(postId) {
+        const response = await DeletePost(postId, token);
+        if (response.status) {
+            if (response.status === 401) navigate('/');
+            else setPosts(posts.filter((post) => post._id !== postId));
+        } else setCustomMessage(response);
+    }
+
+    //TODO Séparer le useEffect en 2 ?
     useEffect(() => {
         window.onscroll = async function () {
             if (
@@ -47,10 +70,11 @@ export default function Home() {
     return (
         <div className="home-wrapper">
             <h1>Groupomania - Fil d'actualité</h1>
+            {/* TODO Supprimer ce bouton et le PostPublish une fois que celui dans le header est fonctionnel */}
             <button onClick={togglePostPublishMode}>
                 Cliquez ici pour rédiger un post
             </button>
-            {postPublishMode ? <PostPublish /> : <></>}
+            {postPublishMode ? <PostPublish insertPost={insertPost} /> : <></>}
             {posts.map((post) => (
                 <Post
                     key={post._id}
@@ -63,6 +87,8 @@ export default function Home() {
                     likeUserIds={post.likeUserIds}
                     creationTimestamp={post.creationTimestamp}
                     modificationTimestamp={post.modificationTimestamp}
+                    refreshPost={refreshPost}
+                    handleDeletePost={handleDeletePost}
                 />
             ))}
         </div>

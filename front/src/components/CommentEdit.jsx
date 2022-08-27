@@ -41,7 +41,7 @@ export default function CommentEdit(props) {
             else {
                 setCommentContent({ text: '', image: null });
                 toggleCommentEditMode();
-                refreshComment(props.id, response.newComment.comment);
+                refreshComment(props.id, response.comment);
             }
         } else throw new Error(response);
     }

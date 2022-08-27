@@ -57,8 +57,8 @@ export async function ModifyComment(commentId, commentContent, token) {
         );
 
         if (response.status === 200) {
-            const newComment = await response.json();
-            return { status: response.status, newComment };
+            const data = await response.json();
+            return { status: response.status, comment: data.comment };
         } else if (response.status === 401) return { status: response.status };
         else if (response.status === 403)
             return "Vous n'avez pas les droits pour effectuer cette action.";

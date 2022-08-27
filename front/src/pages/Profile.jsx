@@ -90,7 +90,7 @@ export default function Profile() {
             if (
                 window.location.href.includes('profile') &&
                 window.innerHeight + window.scrollY >=
-                    document.body.offsetHeight
+                    document.body.offsetHeight + 80
             ) {
                 pageNumber++;
                 const response = await GetFivePostsFromUser(

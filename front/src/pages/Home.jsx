@@ -45,7 +45,7 @@ export default function Home() {
             if (
                 window.location.href.includes('home') &&
                 window.innerHeight + window.scrollY >=
-                    document.body.offsetHeight
+                    document.body.offsetHeight + 80
             ) {
                 pageNumber++;
                 const response = await GetFivePosts(pageNumber, token);

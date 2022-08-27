@@ -2,4 +2,10 @@
     --color-primary: #fd2d01;
     --color-secondary: #ffd7d7;
     --color-tertiary: #4e5166;
+    --color-primary-svg: invert(19%) sepia(99%) saturate(4024%) hue-rotate(8deg)
+        brightness(108%) contrast(99%);
+    --color-secondary-svg: invert(88%) sepia(2%) saturate(3213%)
+        hue-rotate(313deg) brightness(93%) contrast(124%);
+    --color-tertiary-svg: invert(33%) sepia(7%) saturate(1381%)
+        hue-rotate(195deg) brightness(92%) contrast(91%);
 }

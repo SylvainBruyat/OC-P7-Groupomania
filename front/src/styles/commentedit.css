@@ -45,8 +45,7 @@
 }
 
 .comment-edit__close-button:hover {
-    filter: invert(19%) sepia(99%) saturate(4024%) hue-rotate(8deg)
-        brightness(108%) contrast(99%);
+    filter: var(--color-primary-svg);
 }
 
 .comment-edit__form {

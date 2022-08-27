@@ -56,8 +56,7 @@
 .post-card__name-text__edit-menu img {
     height: 100%;
     width: 100%;
-    filter: invert(33%) sepia(7%) saturate(1381%) hue-rotate(195deg)
-        brightness(92%) contrast(91%);
+    filter: var(--color-tertiary-svg);
 }
 
 .post-card__create-time,
@@ -105,8 +104,7 @@
 }
 
 .post-card__like-comment__like-icon.liked {
-    filter: invert(88%) sepia(2%) saturate(3213%) hue-rotate(313deg)
-        brightness(93%) contrast(124%);
+    filter: var(--color-secondary-svg);
 }
 
 .post-card__comments {

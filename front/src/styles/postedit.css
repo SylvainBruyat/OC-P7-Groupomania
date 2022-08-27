@@ -45,8 +45,7 @@
 }
 
 .post-edit__close-button:hover {
-    filter: invert(19%) sepia(99%) saturate(4024%) hue-rotate(8deg)
-        brightness(108%) contrast(99%);
+    filter: var(--color-primary-svg);
 }
 
 .post-edit__form {
@@ -76,8 +75,7 @@
 .post-edit__image-upload-button {
     height: 30px;
     width: 30px;
-    filter: invert(33%) sepia(7%) saturate(1381%) hue-rotate(195deg)
-        brightness(92%) contrast(91%);
+    filter: var(--color-tertiary-svg);
     cursor: pointer;
 }
 

@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { /* useLocation,  */ useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { AuthContext } from '../utils/Context';
 import { Login } from '../services/user.service';
@@ -15,9 +15,8 @@ export default function LoginCard() {
     const [customMessage, setCustomMessage] = useState('');
 
     const navigate = useNavigate();
-    //TODO Décommenter ces 2 lignes avant livraison pour gérer la redirection post-login
-    //const location = useLocation();
-    //const origin = location.state?.from?.pathname || '/home';
+    const location = useLocation();
+    const origin = location.state?.from?.pathname || '/home';
 
     function handleChange(evt) {
         const { name, value } = evt.target;
@@ -29,7 +28,7 @@ export default function LoginCard() {
         const response = await Login(userLoginInfo);
         if (response.status) {
             await handleLogin(response.token);
-            navigate(`/profile/${response.userId}`); //TODO Remplacer par navigate(origin) avant livraison
+            navigate(origin);
         } else setCustomMessage(response);
     }
 

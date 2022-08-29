@@ -6,6 +6,8 @@ import Post from '../components/Post';
 import PostPublish from '../components/PostPublish';
 import { GetFivePosts, GetOnePost, DeletePost } from '../services/post.service';
 
+let reachedLastPost = false;
+
 export default function Home() {
     const [posts, setPosts] = useState([]);
     const [customMessage, setCustomMessage] = useState('');
@@ -15,11 +17,7 @@ export default function Home() {
 
     const navigate = useNavigate();
 
-    let pageNumber = 1;
-
-    async function insertPost(newPost) {
-        setPosts((posts) => [newPost, ...posts]);
-    }
+    let homePageNumber = 1;
 
     async function refreshPost(postId) {
         const response = await GetOnePost(postId, token);
@@ -36,6 +34,15 @@ export default function Home() {
         if (response.status) {
             if (response.status === 401) navigate('/');
             else setPosts(posts.filter((post) => post._id !== postId));
+            /* else {
+                const deletedIndex = posts.findIndex(
+                    (post) => post._id === postId
+                );
+                const pageOfDeletedPost = Math.ceil((deletedIndex + 1) / 5);
+                setPosts(posts.slice(0, (pageOfDeletedPost - 1) * 5));
+                homePageNumber = pageOfDeletedPost;
+                FetchFivePosts();
+            } */
         } else setCustomMessage(response);
     }
 
@@ -44,32 +51,36 @@ export default function Home() {
         window.onscroll = async function () {
             if (
                 window.location.href.includes('home') &&
-                window.innerHeight + window.scrollY >=
-                    document.body.offsetHeight + 80
+                window.innerHeight + Math.ceil(window.scrollY) >=
+                    document.body.offsetHeight + 80 &&
+                reachedLastPost === false
             ) {
-                pageNumber++;
-                const response = await GetFivePosts(pageNumber, token);
+                homePageNumber++;
+                const response = await GetFivePosts(homePageNumber, token);
                 if (response.status) {
                     if (response.status === 401) navigate('/');
                     else setPosts((posts) => [...posts, ...response.newPosts]);
+                    if (response.newPosts.length < 5) reachedLastPost = true;
                 } else setCustomMessage(response);
             }
         };
 
         async function FetchFivePosts() {
-            const response = await GetFivePosts(pageNumber, token);
+            reachedLastPost = false;
+            const response = await GetFivePosts(homePageNumber, token);
             if (response.status) {
                 if (response.status === 401) navigate('/');
                 else setPosts((posts) => [...posts, ...response.newPosts]);
+                if (response.newPosts.length < 5) reachedLastPost = true;
             } else setCustomMessage(response);
         }
         FetchFivePosts();
-    }, [pageNumber, token]);
+    }, [homePageNumber, token]);
 
     return (
         <div className="home-wrapper">
             <h1>Groupomania - Fil d'actualité</h1>
-            {postPublishMode ? <PostPublish insertPost={insertPost} /> : <></>}
+            {postPublishMode ? <PostPublish /> : <></>}
             {posts.map((post) => (
                 <Post
                     key={post._id}
@@ -85,6 +96,12 @@ export default function Home() {
                     handleDeletePost={handleDeletePost}
                 />
             ))}
+            {reachedLastPost && (
+                <p>
+                    Vous avez atteint le dernier message. Il n'y a plus rien à
+                    voir.
+                </p>
+            )}
         </div>
     );
 }

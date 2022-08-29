@@ -7,15 +7,13 @@ import { CreatePost } from '../services/post.service';
 import closeButton from '../assets/icons/close-button.svg';
 import imageUploadButton from '../assets/icons/image-upload-button.svg';
 
-export default function PostPublish(props) {
+export default function PostPublish() {
     const [postContent, setPostContent] = useState({ text: '', image: null });
 
     const { togglePostPublishMode } = useContext(PostPublishContext);
     const { token } = useContext(AuthContext);
 
     const navigate = useNavigate();
-
-    const { insertPost } = props;
 
     function handlePostContentChange(evt) {
         if (evt.target.name === 'text') {
@@ -35,9 +33,9 @@ export default function PostPublish(props) {
         if (response.status) {
             if (response.status === 401) navigate('/');
             else {
-                insertPost(response.newPost);
                 setPostContent({ text: '', image: null });
                 togglePostPublishMode();
+                window.location.reload();
             }
         } else throw new Error(response);
     }

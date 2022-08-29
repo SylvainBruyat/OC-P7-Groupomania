@@ -18,6 +18,7 @@ import {
 import DefaultProfilePicture from '../assets/icons/default-profile-picture.svg';
 
 let name = '';
+let reachedLastProfilePost = false;
 
 export default function Profile() {
     const [customMessage, setCustomMessage] = useState('');
@@ -27,13 +28,14 @@ export default function Profile() {
 
     const navigate = useNavigate();
 
+    let profilePageNumber = 1;
+
     const params = useParams();
     const { postPublishMode } = useContext(PostPublishContext);
     const { token, userId, admin, handleLogout } = useContext(AuthContext);
 
     const deleteProfileDialog = document.getElementById('deleteProfileDialog');
 
-    let pageNumber = 1;
     function handlePictureUpload(evt) {
         setFile(evt.target.files[0]);
     }
@@ -67,11 +69,18 @@ export default function Profile() {
         if (response.status) {
             if (response.status === 401) navigate('/');
             else setPosts(posts.filter((post) => post._id !== postId));
+            /* else {
+                const deletedIndex = posts.findIndex(
+                    (post) => post._id === postId
+                );
+                const pageOfDeletedPost = Math.ceil((deletedIndex + 1) / 5);
+                setPosts(posts.slice(0, (pageOfDeletedPost - 1) * 5));
+                console.log('pageNumber dans handleDeletePost');
+                profilePageNumber = pageOfDeletedPost;
+                console.log('FetchFivePostsFromUser');
+                FetchFivePostsFromUser();
+            } */
         } else setCustomMessage(response);
-    }
-
-    async function insertPost(newPost) {
-        setPosts((posts) => [newPost, ...posts]);
     }
 
     async function refreshPost(postId) {
@@ -89,18 +98,21 @@ export default function Profile() {
         window.onscroll = async function () {
             if (
                 window.location.href.includes('profile') &&
-                window.innerHeight + window.scrollY >=
-                    document.body.offsetHeight + 80
+                window.innerHeight + Math.ceil(window.scrollY) >=
+                    document.body.offsetHeight + 80 &&
+                reachedLastProfilePost === false
             ) {
-                pageNumber++;
+                profilePageNumber++;
                 const response = await GetFivePostsFromUser(
                     params.id,
-                    pageNumber,
+                    profilePageNumber,
                     token
                 );
                 if (response.status) {
                     if (response.status === 401) navigate('/');
                     else setPosts((posts) => [...posts, ...response.newPosts]);
+                    if (response.newPosts.length < 5)
+                        reachedLastProfilePost = true;
                 } else setCustomMessage(response);
             }
         };
@@ -118,7 +130,7 @@ export default function Profile() {
 
                         const postsResponse = await GetFivePostsFromUser(
                             params.id,
-                            pageNumber,
+                            profilePageNumber,
                             token
                         );
                         if (postsResponse.status) {
@@ -135,11 +147,11 @@ export default function Profile() {
             }
         }
         FetchProfile();
-    }, [pageNumber, params, token]);
+    }, [profilePageNumber, params, token]);
 
     return (
         <>
-            {postPublishMode ? <PostPublish insertPost={insertPost} /> : <></>}
+            {postPublishMode ? <PostPublish /> : <></>}
             <section className="profile-wrapper">
                 {/* A refactoriser dans un composant */}
                 <p className="custom-message">{customMessage}</p>
@@ -216,6 +228,12 @@ export default function Profile() {
                         refreshPost={refreshPost}
                     />
                 ))}
+                {reachedLastProfilePost && (
+                    <p>
+                        Vous avez atteint le dernier message. Il n'y a plus rien
+                        à voir.
+                    </p>
+                )}
             </section>
         </>
     );

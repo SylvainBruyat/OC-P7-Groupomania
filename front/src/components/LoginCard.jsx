@@ -28,8 +28,8 @@ export default function LoginCard() {
         evt.preventDefault();
         const response = await Login(userLoginInfo);
         if (response.status) {
-            await handleLogin(response.data);
-            navigate(`/profile/${response.data.userId}`); //TODO Remplacer par navigate(origin) avant livraison
+            await handleLogin(response.token);
+            navigate(`/profile/${response.userId}`); //TODO Remplacer par navigate(origin) avant livraison
         } else setCustomMessage(response);
     }
 

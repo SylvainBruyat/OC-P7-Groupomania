@@ -37,11 +37,7 @@ export async function Login(userLoginInfo) {
         });
         if (response.status === 200) {
             const data = await response.json();
-            return {
-                status: response.status,
-                userId: data.userId,
-                token: data.token,
-            };
+            return { status: response.status, token: data.token };
         } else if (response.status === 401) {
             return 'Mot de passe invalide. Veuillez réessayer';
         } else if (response.status === 404) {

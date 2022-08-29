@@ -59,7 +59,6 @@ exports.login = async (req, res, next) => {
             return res.status(401).json({error: "Invalid password"});
 
         res.status(200).json({
-            userId: user._id,
             token: jwt.sign(
                 {userId: user._id, admin: user.admin,},
                 process.env.TOKEN_KEY,

@@ -7,6 +7,7 @@
 
 .comment-card__content {
     flex-grow: 1;
+    max-width: 398px;
 }
 
 .comment-card__name-text {
@@ -139,24 +140,4 @@
 .deleteCommentDialog__button:hover {
     background-color: var(--color-primary);
     color: white;
-}
-
-.delete-button-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 30px;
-    width: 30px;
-    margin-left: 5px;
-    border-radius: 15px;
-    cursor: pointer;
-}
-
-.delete-button-container:hover {
-    background-color: var(--color-secondary);
-}
-
-.delete-button {
-    height: 20px;
-    width: 20px;
 }

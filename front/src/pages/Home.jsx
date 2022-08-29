@@ -75,7 +75,6 @@ export default function Home() {
                     key={post._id}
                     id={post._id}
                     author={post.userId}
-                    userId={post.userId}
                     text={post.text}
                     imageUrl={post.imageUrl}
                     numberOfLikes={post.numberOfLikes}

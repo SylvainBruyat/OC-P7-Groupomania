@@ -18,7 +18,7 @@ export default function Post(props) {
     const { handleDeletePost, refreshPost } = props;
     const [comments, setComments] = useState([]);
     const [customMessage, setCustomMessage] = useState('');
-    const { token, userId } = useContext(AuthContext);
+    const { token, userId, admin } = useContext(AuthContext);
 
     const [like, setLike] = useState(
         props.likeUserIds.includes(`${userId}`) ? 1 : 0
@@ -118,18 +118,21 @@ export default function Post(props) {
                         >
                             {`${props.author.firstName} ${props.author.lastName}`}
                         </a>
-                        <button className="post-card__name-text__edit-menu">
-                            <img
-                                src={editLogo}
-                                alt="Bouton Modifier"
-                                title="Modifier ce message"
-                                onClick={togglePostEditMode}
-                            />
-                        </button>
+                        {(admin === true ||
+                            admin === 'true' ||
+                            userId === props.author._id) && (
+                            <button className="post-card__name-text__edit-menu">
+                                <img
+                                    src={editLogo}
+                                    alt="Bouton Modifier"
+                                    title="Modifier ce message"
+                                    onClick={togglePostEditMode}
+                                />
+                            </button>
+                        )}
                         {postEditMode ? (
                             <PostEdit
                                 id={props.id}
-                                userId={props.userId}
                                 text={props.text}
                                 imageUrl={props.imageUrl}
                                 togglePostEditMode={togglePostEditMode}
@@ -242,17 +245,21 @@ export default function Post(props) {
                     </div>
                 </form>
             </dialog>
-            <div
-                className="delete-button-container"
-                onClick={() => showDeletePostDialog()}
-            >
-                <img
-                    src={deleteLogo}
-                    alt="Bouton supprimer"
-                    title="Supprimer ce message"
-                    className="delete-button"
-                />
-            </div>
+            {(admin === true ||
+                admin === 'true' ||
+                userId === props.author._id) && (
+                <div
+                    className="delete-button-container"
+                    onClick={() => showDeletePostDialog()}
+                >
+                    <img
+                        src={deleteLogo}
+                        alt="Bouton supprimer"
+                        title="Supprimer ce message"
+                        className="delete-button"
+                    />
+                </div>
+            )}
         </article>
     );
 }

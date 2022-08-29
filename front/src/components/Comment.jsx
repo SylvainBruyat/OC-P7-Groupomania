@@ -7,7 +7,7 @@ import CommentEdit from './CommentEdit';
 import { LikeComment } from '../services/comment.service';
 
 export default function Comment(props) {
-    const { token, userId } = useContext(AuthContext);
+    const { token, userId, admin } = useContext(AuthContext);
 
     const [like, setLike] = useState(
         props.likeUserIds.includes(`${userId}`) ? 1 : 0
@@ -103,41 +103,45 @@ export default function Comment(props) {
                     </span>
                 </div>
             </div>
-            <div
-                className="comment-card__actions"
-                onClick={() => showCommentMenu()}
-            >
-                <p className="comment-card__menu_opener">...</p>
-                {isCommentMenuVisible && (
-                    <div className="comment-card__actions-menu">
-                        <button
-                            className="comment-card__modify-button"
-                            title="Modifier ce commentaire"
-                            onClick={toggleCommentEditMode}
-                        >
-                            Modifier
-                        </button>
-                        <button
-                            className="comment-card__delete-button"
-                            title="Supprimer ce commentaire"
-                            onClick={() => showDeleteCommentDialog()}
-                        >
-                            Supprimer
-                        </button>
-                    </div>
-                )}
-                {commentEditMode ? (
-                    <CommentEdit
-                        id={props.id}
-                        userId={props.userId}
-                        text={props.text}
-                        toggleCommentEditMode={toggleCommentEditMode}
-                        refreshComment={refreshComment}
-                    />
-                ) : (
-                    <></>
-                )}
-            </div>
+            {(admin === true ||
+                admin === 'true' ||
+                userId === props.author._id) && (
+                <div
+                    className="comment-card__actions"
+                    onClick={() => showCommentMenu()}
+                >
+                    <p className="comment-card__menu_opener">...</p>
+                    {isCommentMenuVisible && (
+                        <div className="comment-card__actions-menu">
+                            <button
+                                className="comment-card__modify-button"
+                                title="Modifier ce commentaire"
+                                onClick={toggleCommentEditMode}
+                            >
+                                Modifier
+                            </button>
+                            <button
+                                className="comment-card__delete-button"
+                                title="Supprimer ce commentaire"
+                                onClick={() => showDeleteCommentDialog()}
+                            >
+                                Supprimer
+                            </button>
+                        </div>
+                    )}
+                    {commentEditMode ? (
+                        <CommentEdit
+                            id={props.id}
+                            userId={props.userId}
+                            text={props.text}
+                            toggleCommentEditMode={toggleCommentEditMode}
+                            refreshComment={refreshComment}
+                        />
+                    ) : (
+                        <></>
+                    )}
+                </div>
+            )}
             <dialog
                 className="deleteCommentDialog"
                 id={`deleteCommentDialog-${props.id}`}

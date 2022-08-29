@@ -29,7 +29,7 @@ export default function Profile() {
 
     const params = useParams();
     const { postPublishMode } = useContext(PostPublishContext);
-    const { token, handleLogout } = useContext(AuthContext);
+    const { token, userId, admin, handleLogout } = useContext(AuthContext);
 
     const deleteProfileDialog = document.getElementById('deleteProfileDialog');
 
@@ -190,19 +190,22 @@ export default function Profile() {
                 </dialog>
                 <div className="profile-info">
                     <h1>{name}</h1>
-                    <button
-                        className="profile-delete-button"
-                        onClick={() => showDeletePostDialog()}
-                    >
-                        Supprimer le profil
-                    </button>
+                    {(admin === true ||
+                        admin === 'true' ||
+                        userId === params.id) && (
+                        <button
+                            className="profile-delete-button"
+                            onClick={() => showDeletePostDialog()}
+                        >
+                            Supprimer le profil
+                        </button>
+                    )}
                 </div>
                 {posts.map((post) => (
                     <Post
                         key={post._id}
                         id={post._id}
                         author={post.userId}
-                        userId={post.userId}
                         text={post.text}
                         imageUrl={post.imageUrl}
                         numberOfLikes={post.numberOfLikes}

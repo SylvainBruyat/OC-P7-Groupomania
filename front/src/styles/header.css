@@ -21,7 +21,9 @@ header a {
 }
 
 .header-links {
+    padding-left: 0;
     display: flex;
+    gap: 20px;
 }
 
 .header-links li {

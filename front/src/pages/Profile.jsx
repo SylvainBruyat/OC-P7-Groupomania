@@ -68,18 +68,7 @@ export default function Profile() {
         const response = await DeletePost(postId, token);
         if (response.status) {
             if (response.status === 401) navigate('/');
-            else setPosts(posts.filter((post) => post._id !== postId));
-            /* else {
-                const deletedIndex = posts.findIndex(
-                    (post) => post._id === postId
-                );
-                const pageOfDeletedPost = Math.ceil((deletedIndex + 1) / 5);
-                setPosts(posts.slice(0, (pageOfDeletedPost - 1) * 5));
-                console.log('pageNumber dans handleDeletePost');
-                profilePageNumber = pageOfDeletedPost;
-                console.log('FetchFivePostsFromUser');
-                FetchFivePostsFromUser();
-            } */
+            else window.location.reload();
         } else setCustomMessage(response);
     }
 
@@ -119,6 +108,7 @@ export default function Profile() {
 
         async function FetchProfile() {
             try {
+                reachedLastProfilePost = false;
                 const response = await GetProfile(params.id, token);
                 if (response.status) {
                     if (response.status === 401) navigate('/');

@@ -33,16 +33,7 @@ export default function Home() {
         const response = await DeletePost(postId, token);
         if (response.status) {
             if (response.status === 401) navigate('/');
-            else setPosts(posts.filter((post) => post._id !== postId));
-            /* else {
-                const deletedIndex = posts.findIndex(
-                    (post) => post._id === postId
-                );
-                const pageOfDeletedPost = Math.ceil((deletedIndex + 1) / 5);
-                setPosts(posts.slice(0, (pageOfDeletedPost - 1) * 5));
-                homePageNumber = pageOfDeletedPost;
-                FetchFivePosts();
-            } */
+            else window.location.reload();
         } else setCustomMessage(response);
     }
 

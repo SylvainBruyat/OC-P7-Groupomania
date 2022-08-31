@@ -110,9 +110,11 @@ exports.modifyPost = async (req, res, next) => {
         await Post.updateOne({_id: req.params.id}, {...postObject, _id: req.params.id});
         res.status(200).json({message: "Post successfully modified"});
 
-        const previousPostPictureName = post.imageUrl.split('/images/')[1];
-        if (previousPostPictureName) {
-            await fs.unlink(`images/${previousPostPictureName}`);
+        if (req.file) {
+            const previousPostPictureName = post.imageUrl.split('/images/')[1];
+            if (previousPostPictureName) {
+                await fs.unlink(`images/${previousPostPictureName}`);
+            }
         }
     }
     catch (error) {

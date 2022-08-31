@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 import { AuthContext, PostPublishContext } from '../utils/Context';
 import Post from '../components/Post';
-import PostPublish from '../components/PostPublish';
+import ContentWriting from '../components/ContentWriting';
 import {
     GetFivePostsFromUser,
     GetOnePost,
@@ -141,7 +141,7 @@ export default function Profile() {
 
     return (
         <>
-            {postPublishMode ? <PostPublish /> : <></>}
+            {postPublishMode && <ContentWriting contentType="postCreation" />}
             <section className="profile-wrapper">
                 {/* A refactoriser dans un composant */}
                 <p className="custom-message">{customMessage}</p>

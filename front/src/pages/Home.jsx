@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { AuthContext, PostPublishContext } from '../utils/Context';
 import Post from '../components/Post';
-import PostPublish from '../components/PostPublish';
+import ContentWriting from '../components/ContentWriting';
 import { GetFivePosts, GetOnePost, DeletePost } from '../services/post.service';
 
 let reachedLastPost = false;
@@ -71,7 +71,7 @@ export default function Home() {
     return (
         <div className="home-wrapper">
             <h1>Groupomania - Fil d'actualité</h1>
-            {postPublishMode ? <PostPublish /> : <></>}
+            {postPublishMode && <ContentWriting contentType="postCreation" />}
             {posts.map((post) => (
                 <Post
                     key={post._id}

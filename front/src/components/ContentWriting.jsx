@@ -1,39 +1,53 @@
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { PostPublishContext, AuthContext } from '../utils/Context';
-import { CreatePost } from '../services/post.service';
+import { AuthContext, PostPublishContext } from '../utils/Context';
+import { CreatePost, ModifyPost } from '../services/post.service';
 
 import closeButton from '../assets/icons/close-button.svg';
 import imageUploadButton from '../assets/icons/image-upload-button.svg';
 
-export default function PostPublish() {
-    const [postContent, setPostContent] = useState({ text: '', image: null });
-
-    const { togglePostPublishMode } = useContext(PostPublishContext);
-    const { token } = useContext(AuthContext);
+export default function ContentWriting(props) {
+    const contentType = props.contentType;
+    const [content, setContent] = useState({
+        text: contentType === 'postModification' ? props.text : '',
+        image: null,
+    });
 
     const navigate = useNavigate();
 
-    function handlePostContentChange(evt) {
+    const { togglePostPublishMode } = useContext(PostPublishContext);
+    const { togglePostEditMode } = props;
+    const { token } = useContext(AuthContext);
+    const { refreshPost } = props;
+
+    function handleContentChange(evt) {
         if (evt.target.name === 'text') {
-            setPostContent({ ...postContent, text: evt.target.value });
+            setContent({ ...content, text: evt.target.value });
         } else {
-            setPostContent({ ...postContent, image: evt.target.files[0] });
+            setContent({ ...content, image: evt.target.files[0] });
         }
     }
 
-    function handlePostPublishing(evt) {
+    function handleSubmit(evt) {
         evt.preventDefault();
-        PublishPost();
+        PublishContent();
     }
 
-    async function PublishPost() {
-        const response = await CreatePost(postContent, token);
+    async function PublishContent() {
+        let response;
+        if (contentType === 'postModification')
+            response = await ModifyPost(props.id, content, token);
+        else response = await CreatePost(content, token);
         if (response.status) {
             if (response.status === 401) navigate('/');
             else {
-                setPostContent({ text: '', image: null });
+                setContent({ text: '', image: null });
+            }
+            if (contentType === 'postModification') {
+                togglePostEditMode();
+                refreshPost(props.id);
+            } else {
                 togglePostPublishMode();
                 window.location.reload();
             }
@@ -44,24 +58,32 @@ export default function PostPublish() {
         <div className="post-edit__background">
             <div className="post-edit__interface">
                 <div className="post-edit__top-bar">
-                    <h2>Rédiger un message</h2>
+                    {contentType === 'postModification' ? (
+                        <h2>Modifier un message</h2>
+                    ) : (
+                        <h2>Rédiger un message</h2>
+                    )}
                     <img
                         src={closeButton}
-                        alt="Fermer l'interface d'écriture de post"
+                        alt="Fermer l'interface d'écriture"
                         className="post-edit__close-button"
-                        onClick={togglePostPublishMode}
+                        onClick={
+                            contentType === 'postModification'
+                                ? togglePostEditMode
+                                : togglePostPublishMode
+                        }
                     />
                 </div>
                 <form
                     className="post-edit__form"
-                    onSubmit={(evt) => handlePostPublishing(evt)}
+                    onSubmit={(evt) => handleSubmit(evt)}
                 >
                     <textarea
                         id="text"
                         name="text"
                         placeholder="Ecrivez votre message ici"
-                        value={postContent.postText}
-                        onChange={(evt) => handlePostContentChange(evt)}
+                        value={content.text}
+                        onChange={(evt) => handleContentChange(evt)}
                         maxLength={5000}
                         required
                         autoFocus
@@ -71,7 +93,7 @@ export default function PostPublish() {
                             {/* eslint-disable-next-line jsx-a11y/img-redundant-alt */}
                             <img
                                 src={imageUploadButton}
-                                alt="Ajouter une image"
+                                alt="Bouton d'ajout d'une image"
                                 title="Ajouter une image"
                                 className="post-edit__image-upload-button"
                             />
@@ -79,7 +101,7 @@ export default function PostPublish() {
                                 type="file"
                                 name="image"
                                 id="post-image-upload"
-                                onChange={(evt) => handlePostContentChange(evt)}
+                                onChange={(evt) => handleContentChange(evt)}
                             />
                         </label>
                         <button

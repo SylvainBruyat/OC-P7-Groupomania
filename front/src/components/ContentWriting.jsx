@@ -3,23 +3,52 @@ import { useNavigate } from 'react-router-dom';
 
 import { AuthContext, PostPublishContext } from '../utils/Context';
 import { CreatePost, ModifyPost } from '../services/post.service';
+import { CreateComment, ModifyComment } from '../services/comment.service';
 
 import closeButton from '../assets/icons/close-button.svg';
 import imageUploadButton from '../assets/icons/image-upload-button.svg';
 
 export default function ContentWriting(props) {
     const contentType = props.contentType;
+    const postId = props.postId;
     const [content, setContent] = useState({
-        text: contentType === 'postModification' ? props.text : '',
+        text:
+            contentType === 'postModification' ||
+            contentType === 'commentModification'
+                ? props.text
+                : '',
         image: null,
     });
 
     const navigate = useNavigate();
 
     const { togglePostPublishMode } = useContext(PostPublishContext);
-    const { togglePostEditMode } = props;
     const { token } = useContext(AuthContext);
-    const { refreshPost } = props;
+    const {
+        togglePostEditMode,
+        toggleCommentPublishMode,
+        toggleCommentEditMode,
+        refreshPost,
+        refreshComment,
+        insertComment,
+    } = props;
+
+    let h2Content = '';
+    if (contentType === 'postModification') h2Content = 'Modifier un message';
+    else if (contentType === 'postCreation') h2Content = 'Rédiger un message';
+    else if (contentType === 'commentModification')
+        h2Content = 'Modifier un commentaire';
+    else if (contentType === 'commentCreation')
+        h2Content = 'Rédiger un commentaire';
+
+    let closeAction;
+    if (contentType === 'postModification') closeAction = togglePostEditMode;
+    else if (contentType === 'postCreation')
+        closeAction = togglePostPublishMode;
+    else if (contentType === 'commentModification')
+        closeAction = toggleCommentEditMode;
+    else if (contentType === 'commentCreation')
+        closeAction = toggleCommentPublishMode;
 
     function handleContentChange(evt) {
         if (evt.target.name === 'text') {
@@ -38,7 +67,12 @@ export default function ContentWriting(props) {
         let response;
         if (contentType === 'postModification')
             response = await ModifyPost(props.id, content, token);
-        else response = await CreatePost(content, token);
+        else if (contentType === 'postCreation')
+            response = await CreatePost(content, token);
+        else if (contentType === 'commentModification')
+            response = await ModifyComment(props.id, content.text, token);
+        else if (contentType === 'commentCreation')
+            response = await CreateComment(content.text, postId, token);
         if (response.status) {
             if (response.status === 401) navigate('/');
             else {
@@ -47,9 +81,15 @@ export default function ContentWriting(props) {
             if (contentType === 'postModification') {
                 togglePostEditMode();
                 refreshPost(props.id);
-            } else {
+            } else if (contentType === 'postCreation') {
                 togglePostPublishMode();
                 window.location.reload();
+            } else if (contentType === 'commentModification') {
+                toggleCommentEditMode();
+                refreshComment(props.id, response.comment);
+            } else if (contentType === 'commentCreation') {
+                insertComment(response.newComment);
+                toggleCommentPublishMode();
             }
         } else throw new Error(response);
     }
@@ -58,20 +98,12 @@ export default function ContentWriting(props) {
         <div className="post-edit__background">
             <div className="post-edit__interface">
                 <div className="post-edit__top-bar">
-                    {contentType === 'postModification' ? (
-                        <h2>Modifier un message</h2>
-                    ) : (
-                        <h2>Rédiger un message</h2>
-                    )}
+                    <h2>{h2Content}</h2>
                     <img
                         src={closeButton}
                         alt="Fermer l'interface d'écriture"
                         className="post-edit__close-button"
-                        onClick={
-                            contentType === 'postModification'
-                                ? togglePostEditMode
-                                : togglePostPublishMode
-                        }
+                        onClick={closeAction}
                     />
                 </div>
                 <form

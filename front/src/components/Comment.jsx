@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AuthContext } from '../utils/Context';
-import CommentEdit from './CommentEdit';
+import ContentWriting from './ContentWriting';
 
 import { LikeComment } from '../services/comment.service';
 
@@ -130,12 +130,13 @@ export default function Comment(props) {
                         </div>
                     )}
                     {commentEditMode ? (
-                        <CommentEdit
+                        <ContentWriting
                             id={props.id}
                             userId={props.userId}
                             text={props.text}
                             toggleCommentEditMode={toggleCommentEditMode}
                             refreshComment={refreshComment}
+                            contentType="commentModification"
                         />
                     ) : (
                         <></>

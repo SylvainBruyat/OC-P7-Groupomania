@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../utils/Context';
 import Comment from './Comment';
 import ContentWriting from './ContentWriting';
-import CommentPublish from './CommentPublish';
 import { LikePost } from '../services/post.service';
 import { GetAllComments, DeleteComment } from '../services/comment.service';
 
@@ -191,14 +190,13 @@ export default function Post(props) {
                         />
                         <span>Commenter</span>
                     </button>
-                    {commentPublishMode ? (
-                        <CommentPublish
+                    {commentPublishMode && (
+                        <ContentWriting
                             postId={props.id}
                             toggleCommentPublishMode={toggleCommentPublishMode}
                             insertComment={insertComment}
+                            contentType="commentCreation"
                         />
-                    ) : (
-                        <></>
                     )}
                 </div>
                 <div className="post-card__comments">

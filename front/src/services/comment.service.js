@@ -1,4 +1,4 @@
-export async function CreateComment(commentContent, postId, token) {
+export async function CreateComment(text, postId, token) {
     try {
         const response = await fetch('http://localhost:3000/api/comment', {
             method: 'POST',
@@ -6,7 +6,7 @@ export async function CreateComment(commentContent, postId, token) {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ text: commentContent, postId }),
+            body: JSON.stringify({ text, postId }),
         });
 
         if (response.status === 201) {
@@ -42,7 +42,7 @@ export async function GetAllComments(postId, token) {
     }
 }
 
-export async function ModifyComment(commentId, commentContent, token) {
+export async function ModifyComment(commentId, text, token) {
     try {
         const response = await fetch(
             `http://localhost:3000/api/comment/${commentId}`,
@@ -52,7 +52,7 @@ export async function ModifyComment(commentId, commentContent, token) {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(commentContent),
+                body: JSON.stringify({ text }),
             }
         );
 

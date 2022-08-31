@@ -95,19 +95,19 @@ export default function ContentWriting(props) {
     }
 
     return (
-        <div className="post-edit__background">
-            <div className="post-edit__interface">
-                <div className="post-edit__top-bar">
+        <div className="content-writing__background">
+            <div className="content-writing__interface">
+                <div className="content-writing__top-bar">
                     <h2>{h2Content}</h2>
                     <img
                         src={closeButton}
                         alt="Fermer l'interface d'écriture"
-                        className="post-edit__close-button"
+                        className="content-writing__close-button"
                         onClick={closeAction}
                     />
                 </div>
                 <form
-                    className="post-edit__form"
+                    className="content-writing__form"
                     onSubmit={(evt) => handleSubmit(evt)}
                 >
                     <textarea
@@ -120,14 +120,14 @@ export default function ContentWriting(props) {
                         required
                         autoFocus
                     ></textarea>
-                    <div className="post-edit__bottom-bar">
+                    <div className="content-writing__bottom-bar">
                         <label htmlFor="post-image-upload">
                             {/* eslint-disable-next-line jsx-a11y/img-redundant-alt */}
                             <img
                                 src={imageUploadButton}
                                 alt="Bouton d'ajout d'une image"
                                 title="Ajouter une image"
-                                className="post-edit__image-upload-button"
+                                className="content-writing__image-upload-button"
                             />
                             <input
                                 type="file"
@@ -138,7 +138,7 @@ export default function ContentWriting(props) {
                         </label>
                         <button
                             type="submit"
-                            className="post-edit__submit-button"
+                            className="content-writing__submit-button"
                         >
                             Publier
                         </button>

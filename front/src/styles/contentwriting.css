@@ -1,4 +1,4 @@
-.comment-edit__background {
+.content-writing__background {
     position: fixed;
     top: 0;
     right: 0;
@@ -13,7 +13,7 @@
     background-color: rgba(0, 0, 0, 0.75);
 }
 
-.comment-edit__interface {
+.content-writing__interface {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -25,7 +25,7 @@
     border-radius: 10px;
 }
 
-.comment-edit__top-bar {
+.content-writing__top-bar {
     position: relative;
     display: flex;
     justify-content: center;
@@ -33,7 +33,7 @@
     border-bottom: 1px solid var(--color-tertiary);
 }
 
-.comment-edit__close-button {
+.content-writing__close-button {
     position: absolute;
     top: 5px;
     right: 5px;
@@ -44,11 +44,11 @@
     cursor: pointer;
 }
 
-.comment-edit__close-button:hover {
+.content-writing__close-button:hover {
     filter: var(--color-primary-svg);
 }
 
-.comment-edit__form {
+.content-writing__form {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -65,14 +65,25 @@
     outline: none;
 }
 
-.comment-edit__bottom-bar {
+.content-writing__bottom-bar {
     padding: 10px;
     display: flex;
     align-items: center;
     column-gap: 20px;
 }
 
-.comment-edit__submit-button {
+.content-writing__image-upload-button {
+    height: 30px;
+    width: 30px;
+    filter: var(--color-tertiary-svg);
+    cursor: pointer;
+}
+
+#post-image-upload {
+    display: none;
+}
+
+.content-writing__submit-button {
     height: 30px;
     flex-grow: 1;
     font-size: 1.4em;

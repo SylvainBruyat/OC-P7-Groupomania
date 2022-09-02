@@ -6,18 +6,17 @@ import Post from '../components/Post';
 import ContentWriting from '../components/ContentWriting';
 import { GetFivePosts, GetOnePost, DeletePost } from '../services/post.service';
 
-let reachedLastPost = false;
-
 export default function Home() {
     const [posts, setPosts] = useState([]);
     const [customMessage, setCustomMessage] = useState('');
+    const [homePageNumber, setHomePageNumber] = useState(1);
+    const [reachedLastPost, setReachedLastPost] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const { postPublishMode } = useContext(PostPublishContext);
     const { token } = useContext(AuthContext);
 
     const navigate = useNavigate();
-
-    let homePageNumber = 1;
 
     async function refreshPost(postId) {
         const response = await GetOnePost(postId, token);
@@ -37,36 +36,36 @@ export default function Home() {
         } else setCustomMessage(response);
     }
 
-    //TODO Séparer le useEffect en 2 ?
-    useEffect(() => {
-        window.onscroll = async function () {
-            if (
-                window.location.href.includes('home') &&
-                window.innerHeight + Math.ceil(window.scrollY) >=
-                    document.body.offsetHeight + 80 &&
-                reachedLastPost === false
-            ) {
-                homePageNumber++;
-                const response = await GetFivePosts(homePageNumber, token);
-                if (response.status) {
-                    if (response.status === 401) navigate('/');
-                    else setPosts((posts) => [...posts, ...response.newPosts]);
-                    if (response.newPosts.length < 5) reachedLastPost = true;
-                } else setCustomMessage(response);
-            }
-        };
-
-        async function FetchFivePosts() {
-            reachedLastPost = false;
-            const response = await GetFivePosts(homePageNumber, token);
-            if (response.status) {
-                if (response.status === 401) navigate('/');
-                else setPosts((posts) => [...posts, ...response.newPosts]);
-                if (response.newPosts.length < 5) reachedLastPost = true;
-            } else setCustomMessage(response);
+    window.onscroll = async function () {
+        if (loading === true) return;
+        if (
+            window.location.href.includes('home') &&
+            window.innerHeight + Math.ceil(window.scrollY) >=
+                document.body.offsetHeight + 80 &&
+            reachedLastPost === false
+        ) {
+            FetchFivePosts(homePageNumber);
         }
+    };
+
+    async function FetchFivePosts() {
+        if (loading === true) return;
+        setLoading(true);
+        const response = await GetFivePosts(homePageNumber, token);
+        if (response.status) {
+            if (response.status === 401) navigate('/');
+            else {
+                setPosts((posts) => [...posts, ...response.newPosts]);
+                setHomePageNumber((homePageNumber) => homePageNumber + 1);
+            }
+            if (response.newPosts.length < 5) setReachedLastPost(true);
+        } else setCustomMessage(response);
+        setLoading(false);
+    }
+
+    useEffect(() => {
         FetchFivePosts();
-    }, [homePageNumber, token]);
+    }, []);
 
     return (
         <div className="home-wrapper">

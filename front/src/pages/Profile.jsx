@@ -18,17 +18,17 @@ import {
 import DefaultProfilePicture from '../assets/icons/default-profile-picture.svg';
 
 let name = '';
-let reachedLastProfilePost = false;
 
 export default function Profile() {
     const [customMessage, setCustomMessage] = useState('');
     const [posts, setPosts] = useState([]);
     const [file, setFile] = useState();
     const [profilePicture, setProfilePicture] = useState('');
+    const [profilePageNumber, setProfilePageNumber] = useState(1);
+    const [reachedLastProfilePost, setReachedLastProfilePost] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
-
-    let profilePageNumber = 1;
 
     const params = useParams();
     const { postPublishMode } = useContext(PostPublishContext);
@@ -82,62 +82,60 @@ export default function Profile() {
         );
     }
 
-    //TODO Séparer le useEffect en 2 ?
-    useEffect(() => {
-        window.onscroll = async function () {
-            if (
-                window.location.href.includes('profile') &&
-                window.innerHeight + Math.ceil(window.scrollY) >=
-                    document.body.offsetHeight + 80 &&
-                reachedLastProfilePost === false
-            ) {
-                profilePageNumber++;
-                const response = await GetFivePostsFromUser(
-                    params.id,
-                    profilePageNumber,
-                    token
-                );
-                if (response.status) {
-                    if (response.status === 401) navigate('/');
-                    else setPosts((posts) => [...posts, ...response.newPosts]);
-                    if (response.newPosts.length < 5)
-                        reachedLastProfilePost = true;
-                } else setCustomMessage(response);
-            }
-        };
-
-        async function FetchProfile() {
-            try {
-                reachedLastProfilePost = false;
-                const response = await GetProfile(params.id, token);
-                if (response.status) {
-                    if (response.status === 401) navigate('/');
-                    else {
-                        name = `${response.profileData.firstName} ${response.profileData.lastName}`;
-                        setProfilePicture(
-                            response.profileData.profilePictureUrl
-                        );
-
-                        const postsResponse = await GetFivePostsFromUser(
-                            params.id,
-                            profilePageNumber,
-                            token
-                        );
-                        if (postsResponse.status) {
-                            setPosts((posts) => [
-                                ...posts,
-                                ...postsResponse.newPosts,
-                            ]);
-                        } else setCustomMessage(postsResponse);
-                    }
-                } else setCustomMessage(response);
-            } catch (error) {
-                setCustomMessage(`${error.message}`);
-                console.error(error);
-            }
+    window.onscroll = async function () {
+        if (loading === true) return;
+        if (
+            window.location.href.includes('profile') &&
+            window.innerHeight + Math.ceil(window.scrollY) >=
+                document.body.offsetHeight + 80 &&
+            reachedLastProfilePost === false
+        ) {
+            FetchFivePostsFromUser();
         }
+    };
+
+    async function FetchFivePostsFromUser() {
+        if (loading === true) return;
+        setLoading(true);
+        const response = await GetFivePostsFromUser(
+            params.id,
+            profilePageNumber,
+            token
+        );
+        if (response.status) {
+            if (response.status === 401) navigate('/');
+            else {
+                setPosts((posts) => [...posts, ...response.newPosts]);
+                setProfilePageNumber(
+                    (profilePageNumber) => profilePageNumber + 1
+                );
+            }
+            if (response.newPosts.length < 5) setReachedLastProfilePost(true);
+        } else setCustomMessage(response);
+        setLoading(false);
+    }
+
+    async function FetchProfile() {
+        try {
+            if (loading === true) return;
+            const response = await GetProfile(params.id, token);
+            if (response.status) {
+                if (response.status === 401) navigate('/');
+                else {
+                    name = `${response.profileData.firstName} ${response.profileData.lastName}`;
+                    setProfilePicture(response.profileData.profilePictureUrl);
+                    FetchFivePostsFromUser();
+                }
+            } else setCustomMessage(response);
+        } catch (error) {
+            setCustomMessage(`${error.message}`);
+            console.error(error);
+        }
+    }
+
+    useEffect(() => {
         FetchProfile();
-    }, [profilePageNumber, params, token]);
+    }, []);
 
     return (
         <>

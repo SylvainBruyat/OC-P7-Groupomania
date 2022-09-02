@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AuthContext, PostPublishContext } from '../utils/Context';
@@ -9,9 +9,27 @@ import { GetFivePosts, GetOnePost, DeletePost } from '../services/post.service';
 export default function Home() {
     const [posts, setPosts] = useState([]);
     const [customMessage, setCustomMessage] = useState('');
+
     const [homePageNumber, setHomePageNumber] = useState(1);
-    const [reachedLastPost, setReachedLastPost] = useState(false);
+    const homePageNumberRef = useRef(homePageNumber);
+    const _setHomePageNumber = (newValue) => {
+        homePageNumberRef.current = newValue;
+        setHomePageNumber(newValue);
+    };
+
     const [loading, setLoading] = useState(false);
+    const loadingRef = useRef(loading);
+    const _setLoading = (newValue) => {
+        loadingRef.current = newValue;
+        setLoading(newValue);
+    };
+
+    const [reachedLastPost, setReachedLastPost] = useState(false);
+    const reachedLastPostRef = useRef(reachedLastPost);
+    const _setReachedLastPost = (newValue) => {
+        reachedLastPostRef.current = newValue;
+        setReachedLastPost(newValue);
+    };
 
     const { postPublishMode } = useContext(PostPublishContext);
     const { token } = useContext(AuthContext);
@@ -36,35 +54,39 @@ export default function Home() {
         } else setCustomMessage(response);
     }
 
-    window.onscroll = async function () {
+    const handleScroll = async () => {
         if (loading === true) return;
         if (
             window.location.href.includes('home') &&
             window.innerHeight + Math.ceil(window.scrollY) >=
                 document.body.offsetHeight + 80 &&
-            reachedLastPost === false
+            reachedLastPostRef.current === false
         ) {
-            FetchFivePosts(homePageNumber);
+            await FetchFivePosts();
         }
     };
 
     async function FetchFivePosts() {
-        if (loading === true) return;
-        setLoading(true);
-        const response = await GetFivePosts(homePageNumber, token);
+        if (loadingRef.current === true) return;
+        _setLoading(true);
+        const response = await GetFivePosts(homePageNumberRef.current, token);
         if (response.status) {
             if (response.status === 401) navigate('/');
             else {
                 setPosts((posts) => [...posts, ...response.newPosts]);
-                setHomePageNumber((homePageNumber) => homePageNumber + 1);
+                _setHomePageNumber(homePageNumberRef.current + 1);
             }
-            if (response.newPosts.length < 5) setReachedLastPost(true);
+            if (response.newPosts.length < 5) _setReachedLastPost(true);
         } else setCustomMessage(response);
-        setLoading(false);
+        _setLoading(false);
     }
 
     useEffect(() => {
         FetchFivePosts();
+        setTimeout(() => {
+            window.addEventListener('scroll', handleScroll);
+        }, 500);
+        return window.removeEventListener('scroll', handleScroll);
     }, []);
 
     return (

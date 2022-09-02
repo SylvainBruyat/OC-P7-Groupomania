@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 import { AuthContext, PostPublishContext } from '../utils/Context';
@@ -24,9 +24,27 @@ export default function Profile() {
     const [posts, setPosts] = useState([]);
     const [file, setFile] = useState();
     const [profilePicture, setProfilePicture] = useState('');
+
     const [profilePageNumber, setProfilePageNumber] = useState(1);
+    const profilePageNumberRef = useRef(profilePageNumber);
+    const _setProfilePageNumber = (newValue) => {
+        profilePageNumberRef.current = newValue;
+        setProfilePageNumber(newValue);
+    };
+
     const [reachedLastProfilePost, setReachedLastProfilePost] = useState(false);
+    const reachedLastProfilePostRef = useRef(reachedLastProfilePost);
+    const _setReachedLastProfilePost = (newValue) => {
+        reachedLastProfilePostRef.current = newValue;
+        setReachedLastProfilePost(newValue);
+    };
+
     const [loading, setLoading] = useState(false);
+    const loadingRef = useRef(loading);
+    const _setLoading = (newValue) => {
+        loadingRef.current = newValue;
+        setLoading(newValue);
+    };
 
     const navigate = useNavigate();
 
@@ -82,13 +100,13 @@ export default function Profile() {
         );
     }
 
-    window.onscroll = async function () {
-        if (loading === true) return;
+    const handleScroll = async () => {
+        if (loadingRef.current === true) return;
         if (
             window.location.href.includes('profile') &&
             window.innerHeight + Math.ceil(window.scrollY) >=
                 document.body.offsetHeight + 80 &&
-            reachedLastProfilePost === false
+            reachedLastProfilePostRef.current === false
         ) {
             FetchFivePostsFromUser();
         }
@@ -96,23 +114,21 @@ export default function Profile() {
 
     async function FetchFivePostsFromUser() {
         if (loading === true) return;
-        setLoading(true);
+        _setLoading(true);
         const response = await GetFivePostsFromUser(
             params.id,
-            profilePageNumber,
+            profilePageNumberRef.current,
             token
         );
         if (response.status) {
             if (response.status === 401) navigate('/');
             else {
                 setPosts((posts) => [...posts, ...response.newPosts]);
-                setProfilePageNumber(
-                    (profilePageNumber) => profilePageNumber + 1
-                );
+                _setProfilePageNumber(profilePageNumberRef.current + 1);
             }
-            if (response.newPosts.length < 5) setReachedLastProfilePost(true);
+            if (response.newPosts.length < 5) _setReachedLastProfilePost(true);
         } else setCustomMessage(response);
-        setLoading(false);
+        _setLoading(false);
     }
 
     async function FetchProfile() {
@@ -135,6 +151,10 @@ export default function Profile() {
 
     useEffect(() => {
         FetchProfile();
+        setTimeout(() => {
+            window.addEventListener('scroll', handleScroll);
+        }, 500);
+        return window.removeEventListener('scroll', handleScroll);
     }, []);
 
     return (

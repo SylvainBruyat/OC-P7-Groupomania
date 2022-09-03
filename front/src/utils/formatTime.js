@@ -3,7 +3,6 @@ export default function formatTime(timestamp) {
     const timestampObj = new Date(timestamp);
     let day = timestampObj.getDate();
     if (day < 10) day = day.toString().concat(0).split('').reverse().join('');
-    console.log({ day }, typeof day);
     let month = timestampObj.getMonth() + 1;
     if (month < 10)
         month = month.toString().concat(0).split('').reverse().join('');

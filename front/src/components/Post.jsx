@@ -6,6 +6,7 @@ import Comment from './Comment';
 import ContentWriting from './ContentWriting';
 import { LikePost } from '../services/post.service';
 import { GetAllComments, DeleteComment } from '../services/comment.service';
+import formatTime from '../utils/formatTime';
 
 import likeLogoEmpty from '../assets/icons/like-empty.svg';
 import likeLogoFull from '../assets/icons/like-full.svg';
@@ -43,6 +44,9 @@ export default function Post(props) {
         `deletePostDialog-${props.id}`
     );
 
+    const creationTime = formatTime(props.creationTimestamp);
+    const modificationTime = formatTime(props.modificationTimestamp);
+
     useEffect(() => {
         async function FetchComments() {
             const response = await GetAllComments(props.id, token);
@@ -53,17 +57,6 @@ export default function Post(props) {
         }
         FetchComments();
     }, [props.id, token]);
-
-    function formatTime(timestamp) {
-        if (timestamp === null) return null;
-        //Extracts an array with [year, month, date]
-        const date = timestamp.split('T')[0].split('-');
-        //Extracts an array with [hours, minutes, seconds]
-        const time = timestamp.split('T')[1].split('.')[0].split(':');
-        return `${date[2]}/${date[1]}/${date[0]} à ${time[0]}h${time[1]}`;
-    }
-    const creationTime = formatTime(props.creationTimestamp);
-    const modificationTime = formatTime(props.modificationTimestamp);
 
     async function handleLike(postId) {
         const response = await LikePost(postId, like, token);

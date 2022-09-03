@@ -5,6 +5,7 @@ import { AuthContext } from '../utils/Context';
 import ContentWriting from './ContentWriting';
 
 import { LikeComment } from '../services/comment.service';
+import formatTime from '../utils/formatTime';
 
 export default function Comment(props) {
     const { token, userId, admin } = useContext(AuthContext);
@@ -32,14 +33,6 @@ export default function Comment(props) {
         setCommentEditMode(!commentEditMode);
     };
 
-    function formatTime(timestamp) {
-        if (timestamp === null) return null;
-        //Extracts an array with [year, month, date]
-        const date = timestamp.split('T')[0].split('-');
-        //Extracts an array with [hours, minutes, seconds]
-        const time = timestamp.split('T')[1].split('.')[0].split(':');
-        return `${date[2]}/${date[1]}/${date[0]} à ${time[0]}h${time[1]}`;
-    }
     const creationTime = formatTime(props.creationTimestamp);
     const modificationTime = formatTime(props.modificationTimestamp);
 

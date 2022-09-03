@@ -9,6 +9,7 @@ let commentDefinition = {
     text: {type: String, required: true, maxLength: 5000},
     numberOfLikes: {type: Number, required: true},
     likeUserIds: {type: Array, required: true},
+    //Essayer de raccourcir ces noms. Voir pour utiliser les timestamp par défaut de mongo
     creationTimestamp: {type: Date, required: true},
     modificationTimestamp: {type: Date, required: false}
 };

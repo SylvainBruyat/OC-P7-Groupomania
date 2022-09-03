@@ -4,7 +4,6 @@ const router = express.Router();
 const CommentController = require('./CommentController');
 const auth = require('../../middleware/auth');
 
-//Différencier les noms des ids pour les reconnaitre
 router.post('/', auth, CommentController.createComment);
 router.get('/:postId', auth, CommentController.getAllComments);
 router.put('/:id', auth, CommentController.modifyComment);

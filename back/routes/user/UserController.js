@@ -10,7 +10,6 @@ const Comment = require('../comment/CommentModel').model;
 
 exports.signup = async (req, res, next) => {
     try {
-        //TODO Remplacer par une simple Regex ?
         const schema = new passwordValidator();
         schema
             .is().min(8)
@@ -105,7 +104,7 @@ exports.updateProfile = async (req, res, next) => {
             return res.status(403).json({message: "Forbidden Request"});
 
         let user = await User.findOne({_id: req.params.id}); //TODO Voir pour remplacer par findOneAndUpdate()
-        //ou utiliser save() à la fin ?
+        
         if (!user)
             return res.status(404).json({message: "User not found"});
 

@@ -21,6 +21,18 @@
     object-fit: cover;
 }
 
+.profile-picture__button {
+    height: 25px;
+    width: 25px;
+    margin-top: 0;
+    cursor: pointer;
+    filter: var(--color-tertiary-svg);
+}
+
+.profile-picture__input {
+    display: none;
+}
+
 .image-wrapper button {
     margin: 0;
     padding: 0;

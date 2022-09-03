@@ -16,6 +16,7 @@ import {
 } from '../services/user.service';
 
 import DefaultProfilePicture from '../assets/icons/default-profile-picture.svg';
+import ModifyPictureButton from '../assets/icons/modify-picture-button.svg';
 
 let name = '';
 
@@ -56,18 +57,6 @@ export default function Profile() {
 
     function handlePictureUpload(evt) {
         setFile(evt.target.files[0]);
-    }
-
-    async function handlePictureSubmit(evt) {
-        evt.preventDefault();
-        let formData = new FormData();
-        formData.append('image', file);
-
-        const response = await ModifyProfile(params.id, formData, token);
-        if (response.status) {
-            if (response.status === 401) navigate('/');
-            else setProfilePicture(response.profilePictureUrl);
-        } else setCustomMessage(response);
     }
 
     function showDeletePostDialog() {
@@ -150,6 +139,20 @@ export default function Profile() {
     }
 
     useEffect(() => {
+        async function sendProfilePicture() {
+            let formData = new FormData();
+            formData.append('image', file);
+
+            const response = await ModifyProfile(params.id, formData, token);
+            if (response.status) {
+                if (response.status === 401) navigate('/');
+                else setProfilePicture(response.profilePictureUrl);
+            } else setCustomMessage(response);
+        }
+        sendProfilePicture();
+    }, [file]);
+
+    useEffect(() => {
         FetchProfile();
         setTimeout(() => {
             window.addEventListener('scroll', handleScroll);
@@ -173,14 +176,21 @@ export default function Profile() {
                         alt={name}
                         className="profile-picture"
                     />
-                    <form onSubmit={handlePictureSubmit}>
+                    <label htmlFor="profile-picture__upload">
+                        {/* eslint-disable-next-line jsx-a11y/img-redundant-alt */}
+                        <img
+                            src={ModifyPictureButton}
+                            alt="Modifier votre photo de profil"
+                            className="profile-picture__button"
+                        />
                         <input
                             type="file"
                             accept=".jpg, .jpeg, .png, .gif, .webp"
+                            className="profile-picture__input"
+                            id="profile-picture__upload"
                             onChange={handlePictureUpload}
                         />
-                        <button type="submit">Confirmer</button>
-                    </form>
+                    </label>
                 </div>
                 <dialog id="deleteProfileDialog">
                     <form method="dialog">

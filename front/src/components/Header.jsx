@@ -4,7 +4,10 @@ import { NavLink } from 'react-router-dom';
 import { AuthContext, PostPublishContext } from '../utils/Context';
 
 import redLogo from '../assets/icon-left-font-resized.png';
+import homepageButton from '../assets/icons/homepage-button.svg';
+import profileButton from '../assets/icons/profile-button.svg';
 import postWriteIcon from '../assets/icons/post-writing-icon.svg';
+import disconnectButton from '../assets/icons/logout-icon.svg';
 
 export default function Header() {
     const { handleLogout, userId } = useContext(AuthContext);
@@ -27,7 +30,12 @@ export default function Header() {
                             isActive ? 'active-link' : undefined
                         }
                     >
-                        Accueil
+                        <img
+                            src={homepageButton}
+                            alt="Accueil"
+                            className="homepage-link__icon"
+                        />
+                        <span className="homepage-link__text">Accueil</span>
                     </NavLink>
                 </li>
                 <li>
@@ -37,7 +45,12 @@ export default function Header() {
                             isActive ? 'active-link' : undefined
                         }
                     >
-                        Profil
+                        <img
+                            src={profileButton}
+                            alt="Profil"
+                            className="profile-link__icon"
+                        />
+                        <span className="profile-link__text">Profil</span>
                     </NavLink>
                 </li>
             </ul>
@@ -55,7 +68,12 @@ export default function Header() {
                 <input placeholder="Ecrivez quelque chose"></input>
             </button>
             <button className="logout-button" onClick={() => handleLogout()}>
-                Déconnexion
+                <img
+                    src={disconnectButton}
+                    alt="Déconnexion"
+                    className="logout-button__icon"
+                />
+                <span className="logout-button__text">Déconnexion</span>
             </button>
         </header>
     );

@@ -16,7 +16,7 @@
 .content-writing__interface {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 95%;
     max-width: 600px;
     height: 80%;
     max-height: 400px;

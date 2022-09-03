@@ -25,7 +25,7 @@ For more info: https://github.com/nfriedly/express-rate-limit#troubleshooting-pr
  */
 const apiLimiter = rateLimit({
     windowMs: 60 * 1000,
-    max: 200,
+    max: 500,
     standardHeaders: true,
     legacyHeaders: false,
 });

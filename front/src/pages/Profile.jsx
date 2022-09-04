@@ -46,6 +46,8 @@ export default function Profile() {
         setLoading(newValue);
     };
 
+    const firstRender = useRef(true);
+
     const navigate = useNavigate();
 
     const params = useParams();
@@ -138,6 +140,10 @@ export default function Profile() {
     }
 
     useEffect(() => {
+        if (firstRender.current) {
+            firstRender.current = false;
+            return;
+        }
         async function sendProfilePicture() {
             let formData = new FormData();
             formData.append('image', file);
@@ -149,7 +155,7 @@ export default function Profile() {
             } else console.log(response);
         }
         sendProfilePicture();
-    }, [file]);
+    }, [file, navigate, params.id, token]);
 
     useEffect(() => {
         FetchProfile();

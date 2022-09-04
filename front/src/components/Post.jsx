@@ -17,7 +17,6 @@ import deleteLogo from '../assets/icons/delete-button.svg';
 export default function Post(props) {
     const { handleDeletePost, refreshPost } = props;
     const [comments, setComments] = useState([]);
-    const [customMessage, setCustomMessage] = useState('');
     const { token, userId, admin } = useContext(AuthContext);
 
     const [like, setLike] = useState(
@@ -53,7 +52,7 @@ export default function Post(props) {
             if (response.status) {
                 if (response.status === 401) navigate('/');
                 else setComments(response.comments);
-            } else setCustomMessage(response);
+            } else console.log(response);
         }
         FetchComments();
     }, [props.id, token]);
@@ -66,7 +65,7 @@ export default function Post(props) {
                 toggleLike();
                 refreshPost(postId);
             }
-        } else setCustomMessage(response);
+        } else console.log(response);
     }
 
     async function insertComment(newComment) {
@@ -94,14 +93,13 @@ export default function Post(props) {
                 setComments(
                     comments.filter((comment) => comment._id !== commentId)
                 );
-        } else setCustomMessage(response);
+        } else console.log(response);
     }
 
     return (
         <article className="post-card">
             <div className="post-card__content">
                 {/* A refactoriser dans un composant */}
-                <p className="custom-message">{customMessage}</p>
                 <div className="post-card__name-text">
                     <div className="post-card__name-text__name-edit">
                         <a

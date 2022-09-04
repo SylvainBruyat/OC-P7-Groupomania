@@ -8,7 +8,6 @@ import { GetFivePosts, GetOnePost, DeletePost } from '../services/post.service';
 
 export default function Home() {
     const [posts, setPosts] = useState([]);
-    const [customMessage, setCustomMessage] = useState('');
 
     const [homePageNumber, setHomePageNumber] = useState(1);
     const homePageNumberRef = useRef(homePageNumber);
@@ -51,7 +50,7 @@ export default function Home() {
         if (response.status) {
             if (response.status === 401) navigate('/');
             else window.location.reload();
-        } else setCustomMessage(response);
+        } else console.log(response);
     }
 
     const handleScroll = async () => {
@@ -77,7 +76,7 @@ export default function Home() {
                 _setHomePageNumber(homePageNumberRef.current + 1);
             }
             if (response.newPosts.length < 5) _setReachedLastPost(true);
-        } else setCustomMessage(response);
+        } else console.log(response);
         _setLoading(false);
     }
 

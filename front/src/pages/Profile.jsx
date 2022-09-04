@@ -21,7 +21,6 @@ import ModifyPictureButton from '../assets/icons/modify-picture-button.svg';
 let name = '';
 
 export default function Profile() {
-    const [customMessage, setCustomMessage] = useState('');
     const [posts, setPosts] = useState([]);
     const [file, setFile] = useState();
     const [profilePicture, setProfilePicture] = useState('');
@@ -68,7 +67,7 @@ export default function Profile() {
         if (response.status) {
             if (response.status === 401) navigate('/');
             else handleLogout();
-        } else setCustomMessage(response);
+        } else console.log(response);
     }
 
     async function handleDeletePost(postId) {
@@ -76,7 +75,7 @@ export default function Profile() {
         if (response.status) {
             if (response.status === 401) navigate('/');
             else window.location.reload();
-        } else setCustomMessage(response);
+        } else console.log(response);
     }
 
     async function refreshPost(postId) {
@@ -116,7 +115,7 @@ export default function Profile() {
                 _setProfilePageNumber(profilePageNumberRef.current + 1);
             }
             if (response.newPosts.length < 5) _setReachedLastProfilePost(true);
-        } else setCustomMessage(response);
+        } else console.log(response);
         _setLoading(false);
     }
 
@@ -131,9 +130,9 @@ export default function Profile() {
                     setProfilePicture(response.profileData.profilePictureUrl);
                     FetchFivePostsFromUser();
                 }
-            } else setCustomMessage(response);
+            } else console.log(response);
         } catch (error) {
-            setCustomMessage(`${error.message}`);
+            console.log(`${error.message}`);
             console.error(error);
         }
     }
@@ -147,7 +146,7 @@ export default function Profile() {
             if (response.status) {
                 if (response.status === 401) navigate('/');
                 else setProfilePicture(response.profilePictureUrl);
-            } else setCustomMessage(response);
+            } else console.log(response);
         }
         sendProfilePicture();
     }, [file]);
@@ -165,15 +164,14 @@ export default function Profile() {
             {postPublishMode && <ContentWriting contentType="postCreation" />}
             <section className="profile-wrapper">
                 {/* A refactoriser dans un composant */}
-                <p className="custom-message">{customMessage}</p>
                 <div className="image-wrapper">
+                    {/* eslint-disable-next-line jsx-a11y/alt-text */}
                     <img
                         src={
                             profilePicture === ''
                                 ? DefaultProfilePicture
                                 : profilePicture
                         }
-                        alt={name}
                         className="profile-picture"
                     />
                     <label htmlFor="profile-picture__upload">
@@ -181,6 +179,7 @@ export default function Profile() {
                         <img
                             src={ModifyPictureButton}
                             alt="Modifier votre photo de profil"
+                            title="Modifier votre photo de profil"
                             className="profile-picture__button"
                         />
                         <input

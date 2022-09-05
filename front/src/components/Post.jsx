@@ -136,7 +136,7 @@ export default function Post(props) {
                     </div>
                     <p>{props.text}</p>
                 </div>
-                {props.imageUrl === '' ? null : (
+                {props.imageUrl !== '' && (
                     <img
                         src={props.imageUrl}
                         alt=""
@@ -146,7 +146,7 @@ export default function Post(props) {
                 <p className="post-card__create-time">
                     Posté le {creationTime}
                 </p>
-                {props.modificationTimestamp === null ? null : (
+                {props.modificationTimestamp !== null && (
                     <p className="post-card__modify-time">
                         Modifié le {modificationTime}
                     </p>
@@ -171,7 +171,7 @@ export default function Post(props) {
                         )}
                     </button>
                     <span>
-                        {props.numberOfLikes > 0 ? props.numberOfLikes : null}
+                        {props.numberOfLikes > 0 && props.numberOfLikes}
                     </span>
                     <button
                         className="post-card__like-comment__comment-button"

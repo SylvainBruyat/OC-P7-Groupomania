@@ -70,7 +70,7 @@ export default function Comment(props) {
                 <p className="comment-card__create-time">
                     Posté le {creationTime}
                 </p>
-                {props.modificationTimestamp === null ? null : (
+                {props.modificationTimestamp !== null && (
                     <p className="comment-card__modify-time">
                         Modifié le {modificationTime}
                     </p>
@@ -92,7 +92,7 @@ export default function Comment(props) {
                         </button>
                     )}
                     <span>
-                        {props.numberOfLikes > 0 ? props.numberOfLikes : null}
+                        {props.numberOfLikes > 0 && props.numberOfLikes}
                     </span>
                 </div>
             </div>

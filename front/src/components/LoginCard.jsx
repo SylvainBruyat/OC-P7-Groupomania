@@ -66,7 +66,6 @@ export default function LoginCard() {
                 </p>
                 <button type="submit">Connexion</button>
             </form>
-            {/* A refactoriser dans un composant */}
             <p className="custom-message">{customMessage}</p>
         </div>
     );

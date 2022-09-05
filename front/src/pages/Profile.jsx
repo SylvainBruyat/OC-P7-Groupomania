@@ -169,7 +169,6 @@ export default function Profile() {
         <>
             {postPublishMode && <ContentWriting contentType="postCreation" />}
             <section className="profile-wrapper">
-                {/* A refactoriser dans un composant */}
                 <div className="image-wrapper">
                     {/* eslint-disable-next-line jsx-a11y/img-redundant-alt */}
                     <img

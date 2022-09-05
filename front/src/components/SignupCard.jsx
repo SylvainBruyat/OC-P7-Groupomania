@@ -103,7 +103,6 @@ export default function SignupCard(props) {
                 </p>
                 <button type="submit">Inscription</button>
             </form>
-            {/* A refactoriser dans un composant */}
             <p className="custom-message">{customMessage}</p>
         </div>
     );

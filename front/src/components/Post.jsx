@@ -101,7 +101,6 @@ export default function Post(props) {
     return (
         <article className="post-card">
             <div className="post-card__content">
-                {/* A refactoriser dans un composant */}
                 <div className="post-card__name-text">
                     <div className="post-card__name-text__name-edit">
                         <a

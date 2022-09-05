@@ -121,21 +121,24 @@ export default function ContentWriting(props) {
                         autoFocus
                     ></textarea>
                     <div className="content-writing__bottom-bar">
-                        <label htmlFor="post-image-upload">
-                            {/* eslint-disable-next-line jsx-a11y/img-redundant-alt */}
-                            <img
-                                src={imageUploadButton}
-                                alt="Bouton d'ajout d'une image"
-                                title="Ajouter une image"
-                                className="content-writing__image-upload-button"
-                            />
-                            <input
-                                type="file"
-                                name="image"
-                                id="post-image-upload"
-                                onChange={(evt) => handleContentChange(evt)}
-                            />
-                        </label>
+                        {(contentType === 'postModification' ||
+                            contentType === 'postCreation') && (
+                            <label htmlFor="post-image-upload">
+                                {/* eslint-disable-next-line jsx-a11y/img-redundant-alt */}
+                                <img
+                                    src={imageUploadButton}
+                                    alt="Bouton d'ajout d'une image"
+                                    title="Ajouter une image"
+                                    className="content-writing__image-upload-button"
+                                />
+                                <input
+                                    type="file"
+                                    name="image"
+                                    id="post-image-upload"
+                                    onChange={(evt) => handleContentChange(evt)}
+                                />
+                            </label>
+                        )}
                         <button
                             type="submit"
                             className="content-writing__submit-button"

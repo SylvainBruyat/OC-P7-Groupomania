@@ -9,7 +9,6 @@ let postDefinition = {
     imageUrl: {type: String, required: false},
     numberOfLikes: {type: Number, required: true},
     likeUserIds: {type: Array, required: true},
-    //Essayer de raccourcir ces noms. Voir pour utiliser les timestamp par défaut de mongo
     creationTimestamp: {type: Date, required: true},
     modificationTimestamp: {type: Date, required: false}
 };

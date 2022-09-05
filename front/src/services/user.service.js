@@ -14,7 +14,6 @@ export async function Signup(userSignupInfo) {
         } else if (response.status === 400) {
             const data = await response.json();
             if (data.message === 'Invalid password') {
-                //TODO Exploiter data.failedCriteria pour indiquer quels critères ne sont pas respectés
                 return 'Votre mot de passe ne correspond pas aux critères demandés. Veuillez réessayer.';
             } else
                 return 'Requête invalide. Veuillez vérifier les informations fournies dans le formulaire et réessayer';

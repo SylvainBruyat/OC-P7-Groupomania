@@ -42,11 +42,6 @@ app.use(express.json());
 app.use(helmet());
 app.use(mongoSanitize({allowDots: true}));
 
-/* TODO Ajouter des couches de sécurité :
-    contrôle des entrées utilisateur (package joi ?),
-    etc.
-*/
-
 app.use('/images', express.static(path.join(__dirname, 'images'), {setHeaders (res, path, stat) {
     res.set('Cross-Origin-Resource-Policy', 'same-site')
 }}));

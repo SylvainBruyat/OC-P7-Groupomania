@@ -1,6 +1,6 @@
 {
     "name": "p7-groupomania-frontend",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "description": "Front end du P7 Groupomania",
     "private": true,
     "dependencies": {

@@ -171,13 +171,14 @@ export default function Profile() {
             <section className="profile-wrapper">
                 {/* A refactoriser dans un composant */}
                 <div className="image-wrapper">
-                    {/* eslint-disable-next-line jsx-a11y/alt-text */}
+                    {/* eslint-disable-next-line jsx-a11y/img-redundant-alt */}
                     <img
                         src={
                             profilePicture === ''
                                 ? DefaultProfilePicture
                                 : profilePicture
                         }
+                        alt="Photo de profil"
                         className="profile-picture"
                     />
                     <label htmlFor="profile-picture__upload">

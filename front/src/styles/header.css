@@ -76,15 +76,36 @@ header a {
 }
 
 .post-writing__button {
-    display: inline-flex;
-    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
     background-color: transparent;
-    border: none;
+    border-radius: 15px;
+    border: 2px solid var(--color-tertiary);
     cursor: pointer;
 }
 
+@media screen and (min-width: 769px) {
+    .post-writing__button img {
+        display: none;
+    }
+
+    .post-writing__button span {
+        display: unset;
+    }
+}
+
 @media screen and (max-width: 768px) {
-    .post-writing__button input {
+    .post-writing__button {
+        border: none;
+    }
+
+    .post-writing__button img {
+        display: unset;
+    }
+
+    .post-writing__button span {
         display: none;
     }
 }

@@ -36,6 +36,11 @@
     cursor: pointer;
 }
 
+.login-card form button:focus {
+    color: var(--color-tertiary);
+    background-color: var(--color-secondary);
+}
+
 .custom-message {
     margin: 0 auto;
     max-width: 500px;

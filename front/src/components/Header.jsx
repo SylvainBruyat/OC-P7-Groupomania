@@ -58,14 +58,12 @@ export default function Header() {
                 className="post-writing__button"
                 onClick={togglePostPublishMode}
             >
-                <p>
-                    <img
-                        className="post-writing__icon"
-                        src={postWriteIcon}
-                        alt="Cliquez ici pour écrire un message"
-                    />
-                </p>
-                <input placeholder="Ecrivez quelque chose"></input>
+                <img
+                    className="post-writing__icon"
+                    src={postWriteIcon}
+                    alt="Cliquez ici pour écrire un message"
+                />
+                <span>Ecrivez quelque chose</span>
             </button>
             <button className="logout-button" onClick={() => handleLogout()}>
                 <img

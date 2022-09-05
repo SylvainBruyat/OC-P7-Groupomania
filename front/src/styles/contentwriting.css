@@ -35,16 +35,21 @@
 
 .content-writing__close-button {
     position: absolute;
-    top: 5px;
-    right: 5px;
-    width: 20px;
-    height: 20px;
-    margin: 5px 5px 0 0;
-    border-radius: 10px;
+    top: 10px;
+    right: 10px;
+    padding: 0;
+    border: none;
+    background-color: transparent;
     cursor: pointer;
 }
 
-.content-writing__close-button:hover {
+.content-writing__close-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.content-writing__close-button:hover,
+.content-writing__close-button:focus {
     filter: var(--color-primary-svg);
 }
 
@@ -75,8 +80,16 @@
 .content-writing__image-upload-button {
     height: 30px;
     width: 30px;
+    padding: 0;
+    border: none;
+    background-color: transparent;
     filter: var(--color-tertiary-svg);
     cursor: pointer;
+}
+
+.content-writing__image-upload-button:hover,
+.content-writing__image-upload-button:focus {
+    filter: var(--color-primary-svg);
 }
 
 #post-image-upload {
@@ -87,9 +100,16 @@
     height: 30px;
     flex-grow: 1;
     font-size: 1.4em;
+    color: var(--color-tertiary);
+    background-color: white;
+    border: 2px solid var(--color-tertiary);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.content-writing__submit-button:hover,
+.content-writing__submit-button:focus {
     color: white;
     background-color: var(--color-tertiary);
     border: none;
-    border-radius: 5px;
-    cursor: pointer;
 }

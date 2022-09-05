@@ -99,12 +99,16 @@ export default function ContentWriting(props) {
             <div className="content-writing__interface">
                 <div className="content-writing__top-bar">
                     <h2>{h2Content}</h2>
-                    <img
-                        src={closeButton}
-                        alt="Fermer l'interface d'écriture"
+                    <button
                         className="content-writing__close-button"
                         onClick={closeAction}
-                    />
+                    >
+                        <img
+                            src={closeButton}
+                            alt="Fermer l'interface d'écriture"
+                            className="content-writing__close-icon"
+                        />
+                    </button>
                 </div>
                 <form
                     className="content-writing__form"

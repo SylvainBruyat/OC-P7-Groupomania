@@ -37,6 +37,11 @@
     cursor: pointer;
 }
 
+.signup-card form button:focus {
+    color: white;
+    background-color: var(--color-primary);
+}
+
 .custom-message {
     margin: 0 auto;
     max-width: 500px;

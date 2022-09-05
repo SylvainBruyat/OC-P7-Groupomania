@@ -76,16 +76,20 @@
 }
 
 .comment-card__menu_opener {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 20px;
     width: 20px;
     margin: 5px 10px 0 10px;
-    display: flex;
-    justify-content: center;
+    background-color: transparent;
     border-radius: 10px;
+    border: none;
     cursor: pointer;
 }
 
-.comment-card__menu_opener:hover {
+.comment-card__menu_opener:hover,
+.comment-card__menu_opener:focus {
     background-color: var(--color-secondary);
 }
 

@@ -27,11 +27,13 @@ export default function Post(props) {
 
     const navigate = useNavigate();
 
-    const togglePostEditMode = () => {
+    const togglePostEditMode = (evt) => {
+        if (evt) evt.preventDefault();
         setPostEditMode(!postEditMode);
     };
 
-    const toggleCommentPublishMode = () => {
+    const toggleCommentPublishMode = (evt) => {
+        if (evt) evt.preventDefault();
         setcommentPublishMode(!commentPublishMode);
     };
 
@@ -55,7 +57,7 @@ export default function Post(props) {
             } else console.log(response);
         }
         FetchComments();
-    }, [props.id, token]);
+    }, [navigate, props.id, token]);
 
     async function handleLike(postId) {
         const response = await LikePost(postId, like, token);
@@ -111,12 +113,14 @@ export default function Post(props) {
                         {(admin === true ||
                             admin === 'true' ||
                             userId === props.author._id) && (
-                            <button className="post-card__name-text__edit-menu">
+                            <button
+                                className="post-card__name-text__edit-menu"
+                                onClick={togglePostEditMode}
+                            >
                                 <img
                                     src={editLogo}
                                     alt="Bouton Modifier"
                                     title="Modifier ce message"
-                                    onClick={togglePostEditMode}
                                 />
                             </button>
                         )}
@@ -177,7 +181,7 @@ export default function Post(props) {
                         <img
                             className="post-card__like-comment__comment-icon"
                             src={commentLogo}
-                            alt="Commenter"
+                            alt=""
                         />
                         <span>Commenter</span>
                     </button>
@@ -236,17 +240,17 @@ export default function Post(props) {
             {(admin === true ||
                 admin === 'true' ||
                 userId === props.author._id) && (
-                <div
-                    className="delete-button-container"
+                <button
+                    className="delete-button"
                     onClick={() => showDeletePostDialog()}
                 >
                     <img
                         src={deleteLogo}
                         alt="Bouton supprimer"
                         title="Supprimer ce message"
-                        className="delete-button"
+                        className="delete-button__icon"
                     />
-                </div>
+                </button>
             )}
         </article>
     );

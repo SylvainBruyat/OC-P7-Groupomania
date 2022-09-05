@@ -103,7 +103,7 @@ export default function Comment(props) {
                     className="comment-card__actions"
                     onClick={() => showCommentMenu()}
                 >
-                    <p className="comment-card__menu_opener">...</p>
+                    <button className="comment-card__menu_opener">...</button>
                     {isCommentMenuVisible && (
                         <div className="comment-card__actions-menu">
                             <button

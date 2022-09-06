@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AuthContext, PostPublishContext } from '../utils/Context';
@@ -94,6 +94,21 @@ export default function ContentWriting(props) {
         } else throw new Error(response);
     }
 
+    const handleEvent = (evt) => {
+        console.log(evt);
+        if (evt.key === 'Enter' || evt.key === ' ') {
+            evt.target.click();
+        }
+    };
+
+    useEffect(() => {
+        const imageUploadLabel = document.querySelector('.image-upload-label');
+        setTimeout(() => {
+            imageUploadLabel.addEventListener('keyup', handleEvent);
+        }, 500);
+        return imageUploadLabel.removeEventListener('keyup', handleEvent);
+    }, []);
+
     return (
         <div className="content-writing__background">
             <div className="content-writing__interface">
@@ -127,13 +142,17 @@ export default function ContentWriting(props) {
                     <div className="content-writing__bottom-bar">
                         {(contentType === 'postModification' ||
                             contentType === 'postCreation') && (
-                            <label htmlFor="post-image-upload">
+                            <label
+                                htmlFor="post-image-upload"
+                                className="image-upload-label"
+                            >
                                 {/* eslint-disable-next-line jsx-a11y/img-redundant-alt */}
                                 <img
                                     src={imageUploadButton}
                                     alt="Bouton d'ajout d'une image"
                                     title="Ajouter une image"
                                     className="content-writing__image-upload-button"
+                                    tabIndex={0}
                                 />
                                 <input
                                     type="file"

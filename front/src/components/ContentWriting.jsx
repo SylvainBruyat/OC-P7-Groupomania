@@ -103,10 +103,12 @@ export default function ContentWriting(props) {
 
     useEffect(() => {
         const imageUploadLabel = document.querySelector('.image-upload-label');
-        setTimeout(() => {
-            imageUploadLabel.addEventListener('keyup', handleEvent);
-        }, 500);
-        return imageUploadLabel.removeEventListener('keyup', handleEvent);
+        if (imageUploadLabel) {
+            setTimeout(() => {
+                imageUploadLabel.addEventListener('keyup', handleEvent);
+            }, 500);
+            return imageUploadLabel.removeEventListener('keyup', handleEvent);
+        }
     }, []);
 
     return (

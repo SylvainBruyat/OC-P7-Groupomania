@@ -54,7 +54,7 @@ export default function Home() {
     }
 
     const handleScroll = async () => {
-        if (loading === true) return;
+        if (loadingRef.current === true) return;
         if (
             window.location.href.includes('home') &&
             window.innerHeight + Math.ceil(window.scrollY) >=

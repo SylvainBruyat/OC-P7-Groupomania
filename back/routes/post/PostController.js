@@ -14,7 +14,7 @@ exports.createPost = async (req, res, next) => {
             modificationTimestamp: null,
         })
         post.text = req.file ? req.body.post : req.body.text;
-        post.imageUrl = req.file ? `${process.env.BASE_URL}/images/${req.file.filename}` : '';
+        post.imageUrl = req.file ? `${process.env.BASE_URL}/images/${req.file.originalname}` : '';
 
         if (req.file) {
             const client = await new ftp({
@@ -22,7 +22,7 @@ exports.createPost = async (req, res, next) => {
                 user: process.env.FTP_USER,
                 pass: process.env.FTP_PASSWORD
             });
-            await client.put(req.file.buffer, `images/${req.file.originalname}`, async (error) => {
+            await client.put(req.file.buffer, `images/${req.file.originalname}`, (error) => {
                 if (error) throw error;
             });
         }
@@ -116,7 +116,7 @@ exports.modifyPost = async (req, res, next) => {
                 user: process.env.FTP_USER,
                 pass: process.env.FTP_PASSWORD
             });
-            await client.put(req.file.buffer, `images/${req.file.originalname}`, async (error) => {
+            await client.put(req.file.buffer, `images/${req.file.originalname}`, (error) => {
                 if (error) throw error;
             });
 
@@ -134,7 +134,7 @@ exports.modifyPost = async (req, res, next) => {
         const postObject = req.file ?
             {
                 text: req.body.post,
-                imageUrl: `${process.env.BASE_URL}/images/${req.file.filename}`,
+                imageUrl: `${process.env.BASE_URL}/images/${req.file.originalname}`,
                 modificationTimestamp: Date.now()
             }
             : {

@@ -24,7 +24,10 @@ export async function CreatePost(postContent, token) {
             };
         }
 
-        const response = await fetch('http://localhost:3000/api/post', options);
+        const response = await fetch(
+            'https://p7-demo.onrender.com/api/post',
+            options
+        );
 
         if (response.status === 201) {
             const data = await response.json();
@@ -41,7 +44,7 @@ export async function CreatePost(postContent, token) {
 export async function GetFivePosts(pageNumber, token) {
     try {
         const response = await fetch(
-            `http://localhost:3000/api/post?page=${pageNumber}`,
+            `https://p7-demo.onrender.com/api/post?page=${pageNumber}`,
             {
                 headers: { Authorization: `Bearer ${token}` },
             }
@@ -61,7 +64,7 @@ export async function GetFivePosts(pageNumber, token) {
 export async function GetFivePostsFromUser(userId, pageNumber, token) {
     try {
         const response = await fetch(
-            `http://localhost:3000/api/post/user/${userId}?page=${pageNumber}`,
+            `https://p7-demo.onrender.com/api/post/user/${userId}?page=${pageNumber}`,
             {
                 headers: { Authorization: `Bearer ${token}` },
             }
@@ -85,7 +88,7 @@ export async function GetFivePostsFromUser(userId, pageNumber, token) {
 export async function GetOnePost(postId, token) {
     try {
         const response = await fetch(
-            `http://localhost:3000/api/post/single/${postId}`,
+            `https://p7-demo.onrender.com/api/post/single/${postId}`,
             {
                 headers: { Authorization: `Bearer ${token}` },
             }
@@ -130,7 +133,7 @@ export async function ModifyPost(postId, postContent, token) {
         }
 
         const response = await fetch(
-            `http://localhost:3000/api/post/${postId}`,
+            `https://p7-demo.onrender.com/api/post/${postId}`,
             options
         );
 
@@ -150,7 +153,7 @@ export async function ModifyPost(postId, postContent, token) {
 export async function DeletePost(postId, token) {
     try {
         const response = await fetch(
-            `http://localhost:3000/api/post/${postId}`,
+            `https://p7-demo.onrender.com/api/post/${postId}`,
             {
                 method: 'DELETE',
                 headers: {
@@ -175,7 +178,7 @@ export async function LikePost(postId, like, token) {
     try {
         const likeValueToPost = like === 0 ? 1 : 0;
         const response = await fetch(
-            `http://localhost:3000/api/post/${postId}/like`,
+            `https://p7-demo.onrender.com/api/post/${postId}/like`,
             {
                 method: 'POST',
                 headers: {

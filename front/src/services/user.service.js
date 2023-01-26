@@ -1,10 +1,13 @@
 export async function Signup(userSignupInfo) {
     try {
-        const response = await fetch('http://localhost:3000/api/user/signup', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(userSignupInfo),
-        });
+        const response = await fetch(
+            'https://p7-demo.onrender.com/api/user/signup',
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userSignupInfo),
+            }
+        );
         if (response.status === 201) {
             return {
                 status: response.status,
@@ -29,11 +32,14 @@ export async function Signup(userSignupInfo) {
 
 export async function Login(userLoginInfo) {
     try {
-        const response = await fetch('http://localhost:3000/api/user/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(userLoginInfo),
-        });
+        const response = await fetch(
+            'https://p7-demo.onrender.com/api/user/login',
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userLoginInfo),
+            }
+        );
         if (response.status === 200) {
             const data = await response.json();
             return { status: response.status, token: data.token };
@@ -52,7 +58,7 @@ export async function Login(userLoginInfo) {
 export async function GetProfile(userId, token) {
     try {
         const response = await fetch(
-            `http://localhost:3000/api/user/${userId}`,
+            `https://p7-demo.onrender.com/api/user/${userId}`,
             {
                 headers: { Authorization: `Bearer ${token}` },
             }
@@ -75,7 +81,7 @@ export async function GetProfile(userId, token) {
 export async function ModifyProfile(userId, formData, token) {
     try {
         const response = await fetch(
-            `http://localhost:3000/api/user/${userId}`,
+            `https://p7-demo.onrender.com/api/user/${userId}`,
             {
                 method: 'PUT',
                 headers: {
@@ -105,7 +111,7 @@ export async function ModifyProfile(userId, formData, token) {
 export async function DeleteProfile(userId, token) {
     try {
         const response = await fetch(
-            `http://localhost:3000/api/user/${userId}`,
+            `https://p7-demo.onrender.com/api/user/${userId}`,
             {
                 method: 'DELETE',
                 headers: {

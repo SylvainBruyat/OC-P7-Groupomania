@@ -1,13 +1,16 @@
 export async function CreateComment(text, postId, token) {
     try {
-        const response = await fetch('http://localhost:3000/api/comment', {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ text, postId }),
-        });
+        const response = await fetch(
+            'https://p7-demo.onrender.com/api/comment',
+            {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ text, postId }),
+            }
+        );
 
         if (response.status === 201) {
             const data = await response.json();
@@ -24,7 +27,7 @@ export async function CreateComment(text, postId, token) {
 export async function GetAllComments(postId, token) {
     try {
         const response = await fetch(
-            `http://localhost:3000/api/comment/${postId}`,
+            `https://p7-demo.onrender.com/api/comment/${postId}`,
             {
                 headers: { Authorization: `Bearer ${token}` },
             }
@@ -45,7 +48,7 @@ export async function GetAllComments(postId, token) {
 export async function ModifyComment(commentId, text, token) {
     try {
         const response = await fetch(
-            `http://localhost:3000/api/comment/${commentId}`,
+            `https://p7-demo.onrender.com/api/comment/${commentId}`,
             {
                 method: 'PUT',
                 headers: {
@@ -74,7 +77,7 @@ export async function ModifyComment(commentId, text, token) {
 export async function DeleteComment(commentId, token) {
     try {
         const response = await fetch(
-            `http://localhost:3000/api/comment/${commentId}`,
+            `https://p7-demo.onrender.com/api/comment/${commentId}`,
             {
                 method: 'DELETE',
                 headers: {
@@ -99,7 +102,7 @@ export async function LikeComment(commentId, like, token) {
     try {
         const likeValueToPost = like === 0 ? 1 : 0;
         const response = await fetch(
-            `http://localhost:3000/api/comment/${commentId}/like`,
+            `https://p7-demo.onrender.com/api/comment/${commentId}/like`,
             {
                 method: 'POST',
                 headers: {

@@ -1,8 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const fs = require('fs/promises');
+const ftp = require('jsftp');
 const passwordValidator = require('password-validator');
-const { request } = require('http');
 
 const User = require('./UserModel').model;
 const Post = require('../post/PostModel').model;
@@ -103,27 +102,54 @@ exports.updateProfile = async (req, res, next) => {
         if (req.params.id !== req.auth.userId && requestingUser.admin !== true)
             return res.status(403).json({message: "Forbidden Request"});
 
-        let user = await User.findOne({_id: req.params.id}); //TODO Voir pour remplacer par findOneAndUpdate()
+        let user = await User.findOne({_id: req.params.id});
         
         if (!user)
             return res.status(404).json({message: "User not found"});
 
+        if (req.file) {
+            const client = await new ftp({
+                host: process.env.FTP_HOST,
+                user: process.env.FTP_USER,
+                pass: process.env.FTP_PASSWORD
+            });
+            
+            await client.put(req.file.buffer, `images/${req.file.originalname}`, (error) => {
+                if (error) throw error;
+            });
+            
+            const previousProfilePictureName = user.profilePictureUrl.split('/images/')[1];
+            if (previousProfilePictureName) {
+                await client.auth(process.env.FTP_USER, process.env.FTP_PASSWORD, (error) => {
+                    if (error) throw error;
+                })
+                await client.raw("DELE", `images/${previousProfilePictureName}`, (error, data) => {
+                    if (error) throw error;
+                })
+            }
+        }
+
         const userObject = req.file ?
             {
-                profilePictureUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+                profilePictureUrl: `${process.env.BASE_URL}/images/${req.file.originalname}`
             }
             : {...req.body};
         await User.updateOne({_id: req.params.id}, {...userObject});
         res.status(200).json({message: "User profile successfully modified", profilePictureUrl: userObject.profilePictureUrl});
 
-        const previousProfilePictureName = user.profilePictureUrl.split('/images/')[1];
-        if (previousProfilePictureName) {
-            await fs.unlink(`images/${previousProfilePictureName}`);
-        }
     }
     catch (error) {
-        if (req.file)
-            await fs.unlink(`images/${req.file.filename}`);
+        if (req.file) {
+            const client = await new ftp({
+                host: process.env.FTP_HOST,
+                user: process.env.FTP_USER,
+                pass: process.env.FTP_PASSWORD
+            });
+            await client.raw("DELE", `images/${req.file.originalname}`, (error, data) => {
+                console.log({data});
+            })
+        }
+
         console.error(error);
         res.status(500).json({message: "Internal server error"});
     }
@@ -150,7 +176,14 @@ exports.deleteProfile = async (req, res, next) => {
 
         if (user.profilePictureUrl !== "") {
             const filename = user.profilePictureUrl.split('/images/')[1];
-            await fs.unlink(`images/${filename}`);
+            const client = await new ftp({
+                host: process.env.FTP_HOST,
+                user: process.env.FTP_USER,
+                pass: process.env.FTP_PASSWORD
+            });
+            await client.raw("DELE", `images/${filename}`, (error, data) => {
+                if (error) throw error;
+            })
         }
     }
     catch (error) {

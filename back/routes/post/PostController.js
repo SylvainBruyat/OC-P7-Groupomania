@@ -1,4 +1,4 @@
-const fs = require('fs/promises');
+const ftp = require('jsftp');
 
 const Post = require('./PostModel').model;
 const User = require('../user/UserModel').model;
@@ -14,15 +14,33 @@ exports.createPost = async (req, res, next) => {
             modificationTimestamp: null,
         })
         post.text = req.file ? req.body.post : req.body.text;
-        post.imageUrl = req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : '';
+        post.imageUrl = req.file ? `${process.env.BASE_URL}/images/${req.file.filename}` : '';
 
+        if (req.file) {
+            const client = await new ftp({
+                host: process.env.FTP_HOST,
+                user: process.env.FTP_USER,
+                pass: process.env.FTP_PASSWORD
+            });
+            await client.put(req.file.buffer, `images/${req.file.originalname}`, async (error) => {
+                if (error) throw error;
+            });
+        }
         const savedPost = await post.save();
         await savedPost.populate('userId', 'firstName lastName');
         return res.status(201).json({message: "Post created successfully", post: savedPost});
     }
     catch (error) {
-        if (req.file)
-            await fs.unlink(`images/${req.file.filename}`);
+        if (req.file) {
+            const client = await new ftp({
+                host: process.env.FTP_HOST,
+                user: process.env.FTP_USER,
+                pass: process.env.FTP_PASSWORD
+            });
+            await client.raw("DELE", `images/${req.file.originalname}`, (error, data) => {
+                console.log({data});
+            })
+        }
         console.error(error);
         res.status(500).json({message: "Internal server error"});
     }
@@ -85,17 +103,38 @@ exports.modifyPost = async (req, res, next) => {
         if (!requestingUser)
             return res.status(403).json({message: "Forbidden request"});
 
-        let post = await Post.findOne({_id: req.params.id}); //TODO Voir pour remplacer par findOneAndUpdate()
+        let post = await Post.findOne({_id: req.params.id});
         if (!post)
             return res.status(404).json({message: "Post not found"});
 
         if (post.userId != req.auth.userId && requestingUser.admin !== true)
             return res.status(403).json({message: "Forbidden Request"});
 
+        if (req.file) {
+            const client = await new ftp({
+                host: process.env.FTP_HOST,
+                user: process.env.FTP_USER,
+                pass: process.env.FTP_PASSWORD
+            });
+            await client.put(req.file.buffer, `images/${req.file.originalname}`, async (error) => {
+                if (error) throw error;
+            });
+
+            const previousPostPictureName = post.imageUrl.split('/images/')[1];
+            if (previousPostPictureName) {
+                await client.auth(process.env.FTP_USER, process.env.FTP_PASSWORD, (error) => {
+                    if (error) throw error;
+                })
+                await client.raw("DELE", `images/${previousPostPictureName}`, (error, data) => {
+                    if (error) throw error;
+                })
+            }
+        }
+
         const postObject = req.file ?
             {
                 text: req.body.post,
-                imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+                imageUrl: `${process.env.BASE_URL}/images/${req.file.filename}`,
                 modificationTimestamp: Date.now()
             }
             : {
@@ -109,17 +148,18 @@ exports.modifyPost = async (req, res, next) => {
 
         await Post.updateOne({_id: req.params.id}, {...postObject, _id: req.params.id});
         res.status(200).json({message: "Post successfully modified"});
-
-        if (req.file) {
-            const previousPostPictureName = post.imageUrl.split('/images/')[1];
-            if (previousPostPictureName) {
-                await fs.unlink(`images/${previousPostPictureName}`);
-            }
-        }
     }
     catch (error) {
-        if (req.file)
-            await fs.unlink(`images/${req.file.filename}`);
+        if (req.file) {
+            const client = await new ftp({
+                host: process.env.FTP_HOST,
+                user: process.env.FTP_USER,
+                pass: process.env.FTP_PASSWORD
+            });
+            await client.raw("DELE", `images/${req.file.originalname}`, (error, data) => {
+                console.log({data});
+            })
+        }
         console.error(error);
         res.status(500).json({message: "Internal server error"});
     }
@@ -145,7 +185,14 @@ exports.deletePost = async (req, res, next) => {
 
         if (post.imageUrl !== "") {
             const filename = post.imageUrl.split('/images/')[1];
-            await fs.unlink(`images/${filename}`);
+            const client = await new ftp({
+                host: process.env.FTP_HOST,
+                user: process.env.FTP_USER,
+                pass: process.env.FTP_PASSWORD
+            });
+            await client.raw("DELE", `images/${filename}`, (error, data) => {
+                if (error) throw error;
+            })
         }
     }
     catch (error) {

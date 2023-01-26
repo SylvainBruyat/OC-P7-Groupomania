@@ -46,7 +46,7 @@ exports.modifyComment = async (req, res, next) => {
         if (!requestingUser)
             return res.status(403).json({message: "Forbidden request"});
 
-        let comment = await Comment.findOne({_id: req.params.id}); //TODO Voir pour remplacer par findOneAndUpdate()
+        let comment = await Comment.findOne({_id: req.params.id});
         if (!comment)
             return res.status(404).json({message: "Comment not found"});
 
